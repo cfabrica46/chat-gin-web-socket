@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/cfabrica46/chat-gin-web-socket/database"
+	"github.com/cfabrica46/chat-gin-web-socket/handler"
 	"github.com/cfabrica46/chat-gin-web-socket/middleware"
-	"github.com/cfabrica46/social-network-mongodb/server/handler"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,7 +26,7 @@ func main() {
 
 	s := r.Group("/api/v1")
 	{
-		s.GET("/users", handler.ShowUsers)
+		//		s.GET("/users", handler.ShowUsers)
 
 		sGetUserFromBody := s.Group("/")
 		sGetUserFromBody.Use(middleware.GetUserFromBody)

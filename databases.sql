@@ -1,16 +1,19 @@
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS black_list;
+
 CREATE TABLE IF NOT EXISTS users(
-    id INTEGER PRIMARY KEY,
-    username TEXT NOT NULL UNIQUE,
-    password  TEXT NOT NULL,
-    role TEXT NOT NULL
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(15) NOT NULL UNIQUE,
+    password  VARCHAR(20) NOT NULL,
+    role VARCHAR(10) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS black_list(
-    token TEXT NOT NULL UNIQUE
+    token VARCHAR(30) NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS rooms(
-    id INTEGER PRIMARY KEY
+    id SERIAL PRIMARY KEY
 );
 
 INSERT INTO users(username, password,role)
