@@ -15,8 +15,7 @@ CREATE TABLE IF NOT EXISTS rooms(
 
 INSERT INTO users(username, password,role)
     VALUES
-        ('cfabrica46',  '01234',        'member'),
-        ('arturo',      '12345',        'member'),
-        ('carlos',      'abcd',         'member'),
-        ('luis',        'lolsito123',   'member');
-
+        ('cfabrica46',      '01234',        'member'),
+        ('arthurnavah',     '12345',        'member'),
+        ('carlos',          'abcd',         'member'),
+        ('luis',            'lolsito123',   'member');
