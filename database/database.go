@@ -2,7 +2,10 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+
+	_ "github.com/lib/pq"
 )
 
 func GetUserByID(id int) (user *User, err error) {
@@ -16,27 +19,33 @@ func GetUserByID(id int) (user *User, err error) {
 }
 
 func GetUserByUsername(username string) (user *User, err error) {
-	row := DB.QueryRow("SELECT users.id,users.password,users.role FROM users WHERE users.username = ?", username)
+	var userBeta User
 
-	err = row.Scan(user.ID, user.Password, user.Role)
+	row := DB.QueryRow("SELECT users.id,users.password,users.role FROM users WHERE users.username = $1", username)
+	err = row.Scan(&userBeta.ID, &userBeta.Password, &userBeta.Role)
 	if err != nil {
 		return
 	}
+	fmt.Println(userBeta)
+	user = &userBeta
 	return
 }
 
 func GetUserByUsernameAndPassword(username, password string) (user *User, err error) {
-	row := DB.QueryRow("SELECT users.id,users.role FROM users WHERE users.username = ? AND users.password = ?", username, password)
+	row := DB.QueryRow("SELECT users.id,users.role FROM users WHERE users.username = $1 AND users.password = $2", username, password)
 
-	err = row.Scan(user.ID, user.Role)
+	var userBeta User
+
+	err = row.Scan(&userBeta.ID, &userBeta.Role)
 	if err != nil {
 		return
 	}
+	user = &userBeta
 	return
 }
 
 func CheckIfUserAlreadyExist(username string) (check bool, err error) {
-	row := DB.QueryRow("SELECT users.id,users.password,users.role FROM users WHERE users.username = ?", username)
+	row := DB.QueryRow("SELECT users.id,users.password,users.role FROM users WHERE users.username = $1", username)
 
 	var user User
 
@@ -66,15 +75,13 @@ func InsertUser(username, password string) (err error) {
 }
 
 func CleanBlackList() {
-	for {
-		stmt, err := DB.Prepare("DELETE FROM black_list")
-		if err != nil {
-			log.Fatal(err)
-		}
+	stmt, err := DB.Prepare("DELETE FROM black_list")
+	if err != nil {
+		log.Fatal(err)
+	}
 
-		_, err = stmt.Exec()
-		if err != nil {
-			log.Fatal(err)
-		}
+	_, err = stmt.Exec()
+	if err != nil {
+		log.Fatal(err)
 	}
 }
