@@ -34,6 +34,13 @@ func main() {
 			sGetUserFromBody.POST("/signin", handler.SignIn)
 			sGetUserFromBody.POST("/signup", handler.SignUp)
 		}
+
+		sGetUserFromToken := s.Group("/")
+		sGetUserFromToken.Use(middleware.GetUserFromToken)
+		{
+			sGetUserFromToken.GET("/logout", handler.LogOut)
+			sGetUserFromToken.GET("/user", handler.Profile)
+		}
 	}
 	r.Run(":8080")
 }

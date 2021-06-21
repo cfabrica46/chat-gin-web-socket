@@ -86,14 +86,12 @@ func SignUp(c *gin.Context) {
 		})
 		return
 	}
-	fmt.Println(1)
 	if user == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"ErrMessage": "Internal Error",
 		})
 		return
 	}
-	fmt.Println(2)
 
 	user.Token, err = token.GenerateToken(user.ID, user.Username, user.Role)
 	if err != nil {
@@ -107,4 +105,27 @@ func SignUp(c *gin.Context) {
 
 	c.JSON(http.StatusOK, token)
 
+}
+
+func LogOut(c *gin.Context) {
+
+	user := c.MustGet("user-data").(*database.User)
+	if user == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"ErrMessage": "Internal Error",
+		})
+		return
+	}
+
+	err := database.InsertTokenIntoBlackList(user.Token)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"ErrMessage": "Internal Error",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"Message": "Sesión Cerrada",
+	})
 }
