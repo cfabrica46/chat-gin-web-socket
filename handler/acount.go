@@ -2,7 +2,6 @@ package handler
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/cfabrica46/chat-gin-web-socket/database"
@@ -37,7 +36,6 @@ func SignIn(c *gin.Context) {
 
 	user.Token, err = token.GenerateToken(user.ID, user.Username, user.Role)
 	if err != nil {
-		log.Fatal(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"ErrMessage": "Internal Error",
 		})

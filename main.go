@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/cfabrica46/chat-gin-web-socket/chat"
 	"github.com/cfabrica46/chat-gin-web-socket/database"
 	"github.com/cfabrica46/chat-gin-web-socket/handler"
 	"github.com/cfabrica46/chat-gin-web-socket/middleware"
@@ -40,6 +41,8 @@ func main() {
 		{
 			sGetUserFromToken.GET("/logout", handler.LogOut)
 			sGetUserFromToken.GET("/user", handler.Profile)
+			sGetUserFromToken.GET("/chat/:id/", chat.Chat)
+
 		}
 	}
 	r.Run(":8080")
