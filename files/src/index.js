@@ -13,14 +13,57 @@ function Background() {
 }
 
 //define fetch on button to send post request
-function SignIn() {
-    return (
-        <form>
-            <label className="form__label">Insert Your Nick: </label>
-            <input className="form__input" type="text" required />
-            <button className="form__submit">Enter</button>
-        </form>
-    );
+class Form extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { value: "" };
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleChange(event) {
+        this.setState({ value: event.target.value });
+    }
+
+    handleSubmit(event) {
+        event.preventDefault();
+        const user = { username: this.state.value };
+
+        fetch("/api/v1/chat", {
+            method: "POST",
+            body: JSON.stringify(user),
+        })
+            .then((responsive) => {
+                if (responsive.status >= 400) {
+                    throw true;
+                }
+                return responsive.json();
+            })
+            .then((resp) => {
+                console.log(resp);
+            })
+            .catch(() => {
+                console.log("error");
+            });
+    }
+
+    render() {
+        return (
+            <form onSubmit={this.handleSubmit}>
+                <label>
+                    Username:
+                    <input
+                        type="text"
+                        value={this.state.value}
+                        onChange={this.handleChange}
+                        required
+                    />
+                </label>
+                <input type="submit" value="Submit" />
+            </form>
+        );
+    }
 }
 
 class Index extends React.Component {
@@ -29,7 +72,7 @@ class Index extends React.Component {
             <div>
                 <Background />
                 <h1 className="title">Title</h1>
-                <SignIn />
+                <Form />
             </div>
         );
     }

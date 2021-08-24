@@ -1,36 +1,54 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import "./sass/style.scss";
+package chat
 
-function Background() {
-    return (
-        <span>
-            <span className="bg"></span>
-            <span className="bg bg2"></span>
-            <span className="bg bg3"></span>
-        </span>
-    );
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
+)
+
+type message struct {
+	Owner string
+	Data  string
 }
 
-function SignIn() {
-    return (
-        <form>
-            <label>Insert Your Nick</label>
-            <input type="text" />
-        </form>
-    );
-}
+var upgrader = websocket.Upgrader{}
 
-class Index extends React.Component {
-    render() {
-        return (
-            <div>
-                <Background />
-                <h1 className="title">Title</h1>
-                <SignIn />
-            </div>
-        );
-    }
-}
+var conns []*websocket.Conn
 
-ReactDOM.render(<Index />, document.getElementById("root"));
+func Chat(c *gin.Context) {
+
+	var user struct {
+		Username string `json:"username"`
+	}
+
+	err := c.BindJSON(&user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"ErrMessage": "Bad Request",
+		})
+		return
+	}
+
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"ErrMessage": "Internal Error",
+		})
+		return
+	}
+
+	defer conn.Close()
+
+	conns = append(conns, conn)
+
+	if len(conns) < 1 {
+		for i := range conns {
+			if conns[i] != conn {
+				conns[i].WriteJSON()
+			}
+		}
+	}
+
+}
