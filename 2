@@ -1,0 +1,36 @@
+import React from "react";
+import ReactDOM from "react-dom";
+import "./sass/style.scss";
+
+function Background() {
+    return (
+        <span>
+            <span className="bg"></span>
+            <span className="bg bg2"></span>
+            <span className="bg bg3"></span>
+        </span>
+    );
+}
+
+function SignIn() {
+    return (
+        <form>
+            <label>Insert Your Nick</label>
+            <input type="text" />
+        </form>
+    );
+}
+
+class Index extends React.Component {
+    render() {
+        return (
+            <div>
+                <Background />
+                <h1 className="title">Title</h1>
+                <SignIn />
+            </div>
+        );
+    }
+}
+
+ReactDOM.render(<Index />, document.getElementById("root"));

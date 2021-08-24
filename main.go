@@ -7,8 +7,6 @@ import (
 
 	"github.com/cfabrica46/chat-gin-web-socket/chat"
 	"github.com/cfabrica46/chat-gin-web-socket/database"
-	"github.com/cfabrica46/chat-gin-web-socket/handler"
-	"github.com/cfabrica46/chat-gin-web-socket/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,23 +25,7 @@ func main() {
 
 	s := r.Group("/api/v1")
 	{
-		//		s.GET("/users", handler.ShowUsers)
-
-		sGetUserFromBody := s.Group("/")
-		sGetUserFromBody.Use(middleware.GetUserFromBody)
-		{
-			sGetUserFromBody.POST("/signin", handler.SignIn)
-			sGetUserFromBody.POST("/signup", handler.SignUp)
-		}
-
-		sGetUserFromToken := s.Group("/")
-		sGetUserFromToken.Use(middleware.GetUserFromToken)
-		{
-			sGetUserFromToken.GET("/logout", handler.LogOut)
-			sGetUserFromToken.GET("/user", handler.Profile)
-			sGetUserFromToken.GET("/chat/:id/", chat.Chat)
-
-		}
+		sGetUserFromToken.GET("/chat", chat.Chat)
 	}
 	r.Run(":8080")
 }
