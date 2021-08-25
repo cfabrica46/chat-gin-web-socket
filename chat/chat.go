@@ -86,7 +86,7 @@ func Chat(c *gin.Context) {
 
 	if len(conns) < 1 {
 		for i := range conns {
-			go func(i int) {
+			go func(i string) {
 				if conns[i] != conn {
 					err = conns[i].WriteJSON(welcomeJSON)
 					if err != nil {
@@ -114,7 +114,7 @@ func ReceiveMessage() {
 }
 
 func SendMessageDisconect(conn *websocket.Conn, id string, username string) (err error) {
-	byeMessage := message{Owner: username, Data: fmt.Sprintf("%s has exited the Chat", user.Username)}
+	byeMessage := message{Owner: username, Data: fmt.Sprintf("%s has exited the Chat", username)}
 
 	byeJSON, err := json.Marshal(byeMessage)
 	if err != nil {
@@ -134,4 +134,5 @@ func SendMessageDisconect(conn *websocket.Conn, id string, username string) (err
 			}(i)
 		}
 	}
+	return
 }
