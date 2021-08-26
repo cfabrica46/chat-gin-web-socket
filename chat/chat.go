@@ -107,10 +107,49 @@ func Chat(c *gin.Context) {
 			}(i)
 		}
 	}
+
+	err = ReceiveAndSendMessage(conn, c, id)
+	if err != nil {
+		delete(conns, id)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"ErrMessage": "Internal Error",
+		})
+		err = SendMessageDisconect(conn, id, user.Username)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"ErrMessage": "Internal Error",
+			})
+			return
+		}
+		return
+	}
+
 }
 
-func ReceiveMessage() {
+func ReceiveAndSendMessage(conn *websocket.Conn, c *gin.Context, id string) (err error) {
+	var newMessage message
 
+	for {
+		var data []byte
+
+		if conn.ReadJSON(&newMessage) != nil {
+			return
+		}
+
+		data, err = json.Marshal(newMessage)
+		if err != nil {
+			return
+		}
+
+		for i := range conns {
+			go func(i string) {
+				err := conns[i].WriteJSON(data)
+				if err != nil {
+					return
+				}
+			}(i)
+		}
+	}
 }
 
 func SendMessageDisconect(conn *websocket.Conn, id string, username string) (err error) {
@@ -128,7 +167,6 @@ func SendMessageDisconect(conn *websocket.Conn, id string, username string) (err
 					err = conns[i].WriteJSON(byeJSON)
 					if err != nil {
 						delete(conns, id)
-						return
 					}
 				}
 			}(i)
