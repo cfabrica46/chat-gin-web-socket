@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -11,8 +12,8 @@ import (
 )
 
 type message struct {
-	Owner string
-	Data  string
+	Owner string `json:"owner"`
+	Data  string `json:"data"`
 }
 
 var upgrader = websocket.Upgrader{}
@@ -21,37 +22,41 @@ var conns = make(map[string]*websocket.Conn)
 
 func Chat(c *gin.Context) {
 
-	var user struct {
-		Username string `json:"username"`
-	}
+	/*
+	 *var user struct {
+	 *    Username string `json:"username"`
+	 *}
+	 */
 
-	err := c.BindJSON(&user)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"ErrMessage": "Bad Request",
-		})
-		return
-	}
-
-	welcomeMessage := message{Owner: user.Username, Data: fmt.Sprintf("%s has joined the Chat", user.Username)}
-
-	welcomeJSON, err := json.Marshal(welcomeMessage)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"ErrMessage": "Internal Error",
-		})
-		return
-	}
-
-	welcomePersonalMessage := message{Owner: user.Username, Data: fmt.Sprintf("Joined the Chat")}
-
-	welcomePersonalJSON, err := json.Marshal(welcomePersonalMessage)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"ErrMessage": "Internal Error",
-		})
-		return
-	}
+	/*
+	 *    err := c.BindJSON(&user)
+	 *    if err != nil {
+	 *        c.JSON(http.StatusBadRequest, gin.H{
+	 *            "ErrMessage": "Bad Request",
+	 *        })
+	 *        return
+	 *    }
+	 *
+	 *    welcomeMessage := message{Owner: user.Username, Data: fmt.Sprintf("%s has joined the Chat", user.Username)}
+	 *
+	 *    welcomeJSON, err := json.Marshal(welcomeMessage)
+	 *    if err != nil {
+	 *        c.JSON(http.StatusInternalServerError, gin.H{
+	 *            "ErrMessage": "Internal Error",
+	 *        })
+	 *        return
+	 *    }
+	 *
+	 *    welcomePersonalMessage := message{Owner: user.Username, Data: fmt.Sprintf("Joined the Chat")}
+	 *
+	 *    welcomePersonalJSON, err := json.Marshal(welcomePersonalMessage)
+	 *    if err != nil {
+	 *        c.JSON(http.StatusInternalServerError, gin.H{
+	 *            "ErrMessage": "Internal Error",
+	 *        })
+	 *        return
+	 *    }
+	 */
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 
@@ -64,69 +69,118 @@ func Chat(c *gin.Context) {
 
 	defer conn.Close()
 
+	msg, err := ReceiveMessage(conn)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"ErrMessage": "Internal Error",
+		})
+		return
+	}
+
+	fmt.Println(msg)
+
 	id := uuid.NewString()
 
 	conns[id] = conn
 
-	err = conn.WriteJSON(welcomePersonalJSON)
-	if err != nil {
-		delete(conns, id)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"ErrMessage": "Internal Error",
-		})
-		err = SendMessageDisconect(conn, id, user.Username)
+	var newMessage = message{Owner: msg.Owner, Data: "holaaaa :v"}
+
+	for {
+		data, err := json.Marshal(newMessage)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"ErrMessage": "Internal Error",
 			})
 			return
 		}
-		return
-	}
 
-	if len(conns) < 1 {
+		fmt.Printf("%s\n", data)
 		for i := range conns {
-			go func(i string) {
-				if conns[i] != conn {
-					err = conns[i].WriteJSON(welcomeJSON)
-					if err != nil {
-						delete(conns, id)
-						c.JSON(http.StatusInternalServerError, gin.H{
-							"ErrMessage": "Internal Error",
-						})
-						err = SendMessageDisconect(conn, id, user.Username)
-						if err != nil {
-							c.JSON(http.StatusInternalServerError, gin.H{
-								"ErrMessage": "Internal Error",
-							})
-							return
-						}
-						return
-					}
-				}
-			}(i)
+			go SendMessage(conns[i], data)
 		}
+		time.Sleep(time.Second * 3)
 	}
 
-	err = ReceiveAndSendMessage(conn, c, id)
-	if err != nil {
-		delete(conns, id)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"ErrMessage": "Internal Error",
-		})
-		err = SendMessageDisconect(conn, id, user.Username)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"ErrMessage": "Internal Error",
-			})
-			return
-		}
-		return
-	}
+	/*
+	 *    id := uuid.NewString()
+	 *
+	 *    conns[id] = conn
+	 *
+	 *    err = conn.WriteJSON(welcomePersonalJSON)
+	 *    if err != nil {
+	 *        delete(conns, id)
+	 *        c.JSON(http.StatusInternalServerError, gin.H{
+	 *            "ErrMessage": "Internal Error",
+	 *        })
+	 *        err = SendMessageDisconect(conn, id, user.Username)
+	 *        if err != nil {
+	 *            c.JSON(http.StatusInternalServerError, gin.H{
+	 *                "ErrMessage": "Internal Error",
+	 *            })
+	 *            return
+	 *        }
+	 *        return
+	 *    }
+	 *
+	 *    if len(conns) < 1 {
+	 *        for i := range conns {
+	 *            go func(i string) {
+	 *                if conns[i] != conn {
+	 *                    err = conns[i].WriteJSON(welcomeJSON)
+	 *                    if err != nil {
+	 *                        delete(conns, id)
+	 *                        c.JSON(http.StatusInternalServerError, gin.H{
+	 *                            "ErrMessage": "Internal Error",
+	 *                        })
+	 *                        err = SendMessageDisconect(conn, id, user.Username)
+	 *                        if err != nil {
+	 *                            c.JSON(http.StatusInternalServerError, gin.H{
+	 *                                "ErrMessage": "Internal Error",
+	 *                            })
+	 *                            return
+	 *                        }
+	 *                        return
+	 *                    }
+	 *                }
+	 *            }(i)
+	 *        }
+	 *    }
+	 *
+	 *    err = ReceiveAndSendMessage(conn, c, id)
+	 *    if err != nil {
+	 *        delete(conns, id)
+	 *        c.JSON(http.StatusInternalServerError, gin.H{
+	 *            "ErrMessage": "Internal Error",
+	 *        })
+	 *        err = SendMessageDisconect(conn, id, user.Username)
+	 *        if err != nil {
+	 *            c.JSON(http.StatusInternalServerError, gin.H{
+	 *                "ErrMessage": "Internal Error",
+	 *            })
+	 *            return
+	 *        }
+	 *        return
+	 *    }
+	 */
 
 }
 
-func ReceiveAndSendMessage(conn *websocket.Conn, c *gin.Context, id string) (err error) {
+func ReceiveMessage(conn *websocket.Conn) (newMessage message, err error) {
+	err = conn.ReadJSON(&newMessage)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func SendMessage(conn *websocket.Conn, data []byte) {
+	err := conn.WriteMessage(1, data)
+	if err != nil {
+		return
+	}
+}
+
+func ReceiveAndSendMessage(conn *websocket.Conn, id string) (err error) {
 	var newMessage message
 
 	for {

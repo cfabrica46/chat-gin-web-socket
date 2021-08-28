@@ -12,7 +12,7 @@ func main() {
 
 	s := r.Group("/api/v1")
 	{
-		s.POST("/chat", chat.Chat)
+		s.GET("/chat", chat.Chat)
 	}
 	r.Run(":8080")
 }

@@ -12,7 +12,6 @@ function Background() {
     );
 }
 
-//define fetch on button to send post request
 class Form extends React.Component {
     constructor(props) {
         super(props);
@@ -28,24 +27,49 @@ class Form extends React.Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        const user = { username: this.state.value };
 
-        fetch("/api/v1/chat", {
-            method: "POST",
-            body: JSON.stringify(user),
-        })
-            .then((responsive) => {
-                if (responsive.status >= 400) {
-                    throw true;
-                }
-                return responsive.json();
-            })
-            .then((resp) => {
-                console.log(resp);
-            })
-            .catch(() => {
-                console.log("error");
-            });
+        class Message {
+            constructor(owner, data) {
+                this.owner = owner;
+                this.data = data;
+            }
+        }
+
+        sessionStorage.setItem("owner", this.state.value);
+
+        let ws = new WebSocket("ws://localhost:8080/api/v1/chat");
+
+        ws.onopen = function () {
+            let message = new Message(
+                sessionStorage.getItem("owner"),
+                sessionStorage.getItem("owner")
+            );
+            ws.send(JSON.stringify(message));
+
+            ws.onmessage = function (event) {
+                let d = JSON.parse(event.data);
+                console.log(`${d.owner}: ${d.data}`);
+            };
+        };
+
+        /*
+         *fetch("/api/v1/chat", {
+         *    method: "POST",
+         *    body: JSON.stringify(user),
+         *})
+         *    .then((responsive) => {
+         *        if (responsive.status >= 400) {
+         *            throw true;
+         *        }
+         *        return responsive.json();
+         *    })
+         *    .then((resp) => {
+         *        console.log(resp);
+         *    })
+         *    .catch(() => {
+         *        console.log("error");
+         *    });
+         */
     }
 
     render() {
