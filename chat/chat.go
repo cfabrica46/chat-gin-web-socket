@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -69,24 +68,12 @@ func Chat(c *gin.Context) {
 
 	defer conn.Close()
 
-	msg, err := ReceiveMessage(conn)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"ErrMessage": "Internal Error",
-		})
-		return
-	}
-
-	fmt.Println(msg)
-
 	id := uuid.NewString()
 
 	conns[id] = conn
 
-	var newMessage = message{Owner: msg.Owner, Data: "holaaaa :v"}
-
 	for {
-		data, err := json.Marshal(newMessage)
+		msg, err := ReceiveMessage(conn)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"ErrMessage": "Internal Error",
@@ -94,11 +81,18 @@ func Chat(c *gin.Context) {
 			return
 		}
 
-		fmt.Printf("%s\n", data)
+		data, err := json.Marshal(msg)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"ErrMessage": "Internal Error",
+			})
+			return
+		}
+
+		fmt.Printf("%s\n", msg)
 		for i := range conns {
 			go SendMessage(conns[i], data)
 		}
-		time.Sleep(time.Second * 3)
 	}
 
 	/*
