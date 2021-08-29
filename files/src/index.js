@@ -29,6 +29,13 @@ class Chat extends React.Component {
         this.setState({ value: event.target.value });
     }
 
+    componentDidMount() {
+        this.ws.onmessage = function (event) {
+            let d = JSON.parse(event.data);
+            console.log(`${d.owner}: ${d.data}`);
+        };
+    }
+
     handleSubmit(event) {
         event.preventDefault();
 
@@ -44,11 +51,6 @@ class Chat extends React.Component {
             this.state.value
         );
         this.ws.send(JSON.stringify(message));
-
-        this.ws.onmessage = function (event) {
-            let d = JSON.parse(event.data);
-            console.log(`${d.owner}: ${d.data}`);
-        };
     }
 
     render() {
