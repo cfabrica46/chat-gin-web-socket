@@ -12,7 +12,7 @@ function Background() {
     );
 }
 
-class Chat extends React.Component {
+class FormChat extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -51,24 +51,35 @@ class Chat extends React.Component {
             this.state.value
         );
         this.ws.send(JSON.stringify(message));
+
+        this.setState({ value: "" });
     }
 
+    render() {
+        return (
+            <form onSubmit={this.handleSubmit}>
+                <label>
+                    Username:
+                    <input
+                        type="text"
+                        value={this.state.value}
+                        onChange={this.handleChange}
+                        required
+                    />
+                </label>
+                <input type="submit" value="Submit" />
+            </form>
+        );
+    }
+}
+
+class Chat extends React.Component {
     render() {
         return (
             <div>
                 <Background />
                 <h1 className="title">Connected</h1>
-                <input
-                    type="text"
-                    value={this.state.value}
-                    onChange={this.handleChange}
-                    required
-                />
-                <input
-                    type="submit"
-                    value="Submit"
-                    onClick={this.handleSubmit}
-                />
+                <FormChat />
             </div>
         );
     }
