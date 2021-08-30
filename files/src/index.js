@@ -33,7 +33,7 @@ class FormChat extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
-
+    //tu tambien xd
     ws = new WebSocket("wss://cfabrica46-chat.herokuapp.com/api/v1/chat");
 
     handleChange(event) {
