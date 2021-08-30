@@ -23,7 +23,11 @@ class Chat extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+<<<<<<< HEAD
     ws = new WebSocket("wss://cfabrica46-chat.herokuapp.com/:8080/api/v1/chat");
+=======
+    ws = new WebSocket("wss://cfabrica46-chat.herokuapp.com/api/v1/chat");
+>>>>>>> hotfix
 
     handleChange(event) {
         this.setState({ value: event.target.value });
