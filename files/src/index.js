@@ -85,7 +85,6 @@ class Chat extends React.Component {
 
     handleMessage(msg) {
         this.state.msgs.push(msg);
-        this.setState({ msgs: msgs });
     }
 
     render() {
