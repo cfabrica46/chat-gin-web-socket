@@ -23,7 +23,7 @@ class Chat extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    ws = new WebSocket("ws://localhost:8080/api/v1/chat");
+    ws = new WebSocket("ws://https://cfabrica46-chat.herokuapp.com/:8080/api/v1/chat");
 
     handleChange(event) {
         this.setState({ value: event.target.value });
