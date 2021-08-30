@@ -15,9 +15,11 @@ function Background() {
 function NewMessage(props) {
     return (
         <div>
-            {props.msgs.map((msg) => <h3>{msg}</h3>)}
+            {props.msgs.map((msg) => (
+                <h3>{msg}</h3>
+            ))}
         </div>
-    )
+    );
 }
 
 class FormChat extends React.Component {
@@ -38,11 +40,12 @@ class FormChat extends React.Component {
         this.setState({ value: event.target.value });
     }
 
+    //cambia
     componentDidMount() {
         this.ws.onmessage = (m) => {
             let message = JSON.parse(m.data);
             console.log(`${message.owner}: ${message.data}`);
-            let msgs = this.state.msgs
+            let msgs = this.state.msgs;
             msgs.push(`${message.owner}: ${message.data}`);
             this.setState({ msgs: msgs });
         };
@@ -85,7 +88,6 @@ class FormChat extends React.Component {
         );
     }
 }
-
 
 class Chat extends React.Component {
     render() {
