@@ -66,8 +66,6 @@ class FormChat extends React.Component {
             this.state.value
         );
         this.ws.send(JSON.stringify(message));
-
-        this.props.handleMessage(this.state.value);
         this.setState({ value: "" });
     }
 
