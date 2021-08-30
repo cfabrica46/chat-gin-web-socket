@@ -16,7 +16,6 @@ class FormChat extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            messages: [""],
             value: "",
         };
 
@@ -53,6 +52,7 @@ class FormChat extends React.Component {
         );
         this.ws.send(JSON.stringify(message));
 
+        this.props.handleMessage(this.state.value);
         this.setState({ value: "" });
     }
 
@@ -60,7 +60,7 @@ class FormChat extends React.Component {
         return (
             <form onSubmit={this.handleSubmit}>
                 <label>
-                    Username:
+                    Message:
                     <input
                         type="text"
                         value={this.state.value}
@@ -75,12 +75,26 @@ class FormChat extends React.Component {
 }
 
 class Chat extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            msgs: [""],
+        };
+        this.handleMessage = this.handleChange.bind(this);
+    }
+
+    handleMessage(msg) {
+        this.state.msgs.push(msg);
+        this.setState({ msgs: msgs });
+    }
+
     render() {
         return (
             <div>
                 <Background />
                 <h1 className="title">Connected</h1>
-                <FormChat />
+                <div className="chat-div">{this.state.msgs}</div>
+                <FormChat handleMessage={this.handleMessage} />
             </div>
         );
     }
