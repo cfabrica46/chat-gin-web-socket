@@ -17,7 +17,7 @@ function NewMessage(props) {
     return (
         <div>
             {props.msgs.map((msg) => (
-                <h1>{msg}</h1>
+                <h3>{msg}</h3>
             ))}
         </div>
     );
@@ -40,10 +40,14 @@ class FormChat extends React.Component {
         this.setState({ value: event.target.value });
     }
 
+    //cambia
     componentDidMount() {
-        this.ws.onmessage = function (event) {
-            let d = JSON.parse(event.data);
-            console.log(`${d.owner}: ${d.data}`);
+        this.ws.onmessage = (m) => {
+            let message = JSON.parse(m.data);
+            console.log(`${message.owner}: ${message.data}`);
+            let msgs = this.state.msgs;
+            msgs.push(`${message.owner}: ${message.data}`);
+            this.setState({ msgs: msgs });
         };
     }
 
