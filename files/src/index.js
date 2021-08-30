@@ -13,11 +13,14 @@ function Background() {
 }
 
 function NewMessage(props) {
+    console.log(props.msgs);
     return (
         <div>
-            {props.msgs.map((msg) => <h3>{msg}</h3>)}
+            {props.msgs.map((msg) => (
+                <h1>{msg}</h1>
+            ))}
         </div>
-    )
+    );
 }
 
 class FormChat extends React.Component {
@@ -25,26 +28,22 @@ class FormChat extends React.Component {
         super(props);
         this.state = {
             value: "",
-            msgs: [],
         };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    ws = new WebSocket("ws://localhost:8080/api/v1/chat");
+    ws = new WebSocket("wss://cfabrica46-chat.herokuapp.com/api/v1/chat");
 
     handleChange(event) {
         this.setState({ value: event.target.value });
     }
 
     componentDidMount() {
-        this.ws.onmessage = (m) => {
-            let message = JSON.parse(m.data);
-            console.log(`${message.owner}: ${message.data}`);
-            let msgs = this.state.msgs
-            msgs.push(`${message.owner}: ${message.data}`);
-            this.setState({ msgs: msgs });
+        this.ws.onmessage = function (event) {
+            let d = JSON.parse(event.data);
+            console.log(`${d.owner}: ${d.data}`);
         };
     }
 
@@ -64,13 +63,14 @@ class FormChat extends React.Component {
         );
         this.ws.send(JSON.stringify(message));
 
+        this.props.handleMessage(this.state.value);
         this.setState({ value: "" });
     }
 
     render() {
         return (
             <form onSubmit={this.handleSubmit}>
-                <NewMessage msgs={this.state.msgs} />
+                <NewMessage msgs={this.props.msgs} />
                 <label>
                     Message:
                     <input
@@ -86,14 +86,29 @@ class FormChat extends React.Component {
     }
 }
 
-
 class Chat extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            msgs: [],
+        };
+        this.handleMessage = this.handleMessage.bind(this);
+    }
+
+    handleMessage(msg) {
+        this.state.msgs.push(msg);
+        console.log(this.state.msgs);
+    }
+
     render() {
         return (
             <div>
                 <Background />
                 <h1 className="title">Connected</h1>
-                <FormChat handleMessage={this.handleMessage} />
+                <FormChat
+                    handleMessage={this.handleMessage}
+                    msgs={this.state.msgs}
+                />
             </div>
         );
     }
