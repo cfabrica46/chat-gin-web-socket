@@ -13,7 +13,6 @@ function Background() {
 }
 
 function NewMessage(props) {
-    console.log(props.msgs);
     return (
         <div>
             {props.msgs.map((msg) => (
@@ -28,6 +27,7 @@ class FormChat extends React.Component {
         super(props);
         this.state = {
             value: "",
+            msgs: [],
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -74,7 +74,7 @@ class FormChat extends React.Component {
     render() {
         return (
             <form onSubmit={this.handleSubmit}>
-                <NewMessage msgs={this.props.msgs} />
+                <NewMessage msgs={this.state.msgs} />
                 <label>
                     Message:
                     <input
@@ -91,19 +91,6 @@ class FormChat extends React.Component {
 }
 
 class Chat extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            msgs: [],
-        };
-        this.handleMessage = this.handleMessage.bind(this);
-    }
-
-    handleMessage(msg) {
-        this.state.msgs.push(msg);
-        console.log(this.state.msgs);
-    }
-
     render() {
         return (
             <div>
@@ -111,7 +98,6 @@ class Chat extends React.Component {
                 <h1 className="title">Connected</h1>
                 <FormChat
                     handleMessage={this.handleMessage}
-                    msgs={this.state.msgs}
                 />
             </div>
         );
