@@ -80,7 +80,7 @@ class Chat extends React.Component {
         this.state = {
             msgs: [""],
         };
-        this.handleMessage = this.handleChange.bind(this);
+        this.handleMessage = this.handleMessage.bind(this);
     }
 
     handleMessage(msg) {
