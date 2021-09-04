@@ -1,6 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { v4 as uuidv4 } from "uuid";
 import "./sass/style.scss";
+
+class Message {
+    constructor(owner, data) {
+        this.owner = owner;
+        this.data = data;
+    }
+}
 
 function Background() {
     return (
@@ -12,11 +20,27 @@ function Background() {
     );
 }
 
-function NewMessage(props) {
+function DisplayElementsSlice(props) {
     return (
         <div>
-            {props.msgs.map((msg) => (
-                <h3>{msg}</h3>
+            {props.elements.map((e) => (
+                <h3>{e}</h3>
+            ))}
+        </div>
+    );
+}
+
+function DisplayElementsMap(props) {
+    let iterator = props.elements.values();
+    let slice = [];
+    for (const item of iterator) {
+        slice.push(item);
+    }
+    console.log(slice);
+    return (
+        <div>
+            {slice.map((e) => (
+                <h3>{e}</h3>
             ))}
         </div>
     );
@@ -28,6 +52,7 @@ class FormChat extends React.Component {
         this.state = {
             value: "",
             msgs: [],
+            users: new Map(),
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -43,22 +68,49 @@ class FormChat extends React.Component {
     componentDidMount() {
         this.ws.onmessage = (m) => {
             let message = JSON.parse(m.data);
+
+            let owner = this.state.users.get(message.owner);
+            if (owner === undefined) {
+                this.state.users.set(message.owner, message.owner);
+            }
+
             console.log(`${message.owner}: ${message.data}`);
             let msgs = this.state.msgs;
             msgs.push(`${message.owner}: ${message.data}`);
             this.setState({ msgs: msgs });
         };
+
+        this.ws.onopen = () => {
+            this.state.users.set(
+                sessionStorage.getItem("owner"),
+                sessionStorage.getItem("owner")
+            );
+
+            let message = new Message(
+                sessionStorage.getItem("owner"),
+                "has joined the chat"
+            );
+            console.log(message);
+            this.ws.send(JSON.stringify(message));
+            this.setState({ value: "" });
+        };
+
+        window.addEventListener("unload", (ev) => {
+            let message = new Message(
+                sessionStorage.getItem("owner"),
+                "has gone out to the chat"
+            );
+            console.log(message);
+            this.ws.send(JSON.stringify(message));
+            this.setState({ value: "" });
+
+            this.state.users.delete(sessionStorage.getItem("id"));
+            ev.returnValue = "";
+        });
     }
 
     handleSubmit(event) {
         event.preventDefault();
-
-        class Message {
-            constructor(owner, data) {
-                this.owner = owner;
-                this.data = data;
-            }
-        }
 
         let message = new Message(
             sessionStorage.getItem("owner"),
@@ -71,7 +123,7 @@ class FormChat extends React.Component {
     render() {
         return (
             <form onSubmit={this.handleSubmit}>
-                <NewMessage msgs={this.state.msgs} />
+                <DisplayElementsSlice elements={this.state.msgs} />
                 <label>
                     Message:
                     <input
@@ -82,6 +134,7 @@ class FormChat extends React.Component {
                     />
                 </label>
                 <input type="submit" value="Submit" />
+                <DisplayElementsMap elements={this.state.users} />
             </form>
         );
     }

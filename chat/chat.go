@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -62,6 +63,7 @@ func Chat(c *gin.Context) {
 }
 
 func ReceiveMessage(conn *websocket.Conn) (newMessage message, err error) {
+	conn.SetReadDeadline(time.Now().Add(time.Hour))
 	err = conn.ReadJSON(&newMessage)
 	if err != nil {
 		return
