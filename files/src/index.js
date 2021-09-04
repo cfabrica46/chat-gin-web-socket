@@ -34,13 +34,12 @@ class FormChat extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    ws = new WebSocket("/api/v1/chat", ["ws", "wss"]);
+    ws = new WebSocket(`${localStorage.getItem("host")}/api/v1/chat`);
 
     handleChange(event) {
         this.setState({ value: event.target.value });
     }
 
-    //cambia
     componentDidMount() {
         this.ws.onmessage = (m) => {
             let message = JSON.parse(m.data);
@@ -94,9 +93,7 @@ class Chat extends React.Component {
             <div>
                 <Background />
                 <h1 className="title">Connected</h1>
-                <FormChat
-                    handleMessage={this.handleMessage}
-                />
+                <FormChat handleMessage={this.handleMessage} />
             </div>
         );
     }
@@ -109,6 +106,21 @@ class Form extends React.Component {
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    componentDidMount() {
+        fetch("/api/v1/host", {
+            method: "GET",
+        })
+            .then((responsive) => {
+                if (responsive.status >= 400) {
+                    throw true;
+                }
+                return responsive.json();
+            })
+            .then((resp) => {
+                localStorage.setItem("host", resp);
+            });
     }
 
     handleChange(event) {
