@@ -1,12 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { v4 as uuidv4 } from "uuid";
 import "./sass/style.scss";
 
 class Message {
-    constructor(owner, data) {
+    constructor(owner, data, users) {
         this.owner = owner;
         this.data = data;
+        this.users = users
     }
 }
 
@@ -52,7 +52,7 @@ class FormChat extends React.Component {
         this.state = {
             value: "",
             msgs: [],
-            users: new Map(),
+            users: [],
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -67,26 +67,42 @@ class FormChat extends React.Component {
 
     componentDidMount() {
         this.ws.onmessage = (m) => {
-            let message = JSON.parse(m.data);
+            let deletedUser = false
 
-            let owner = this.state.users.get(message.owner);
-            if (owner === undefined) {
-                this.state.users.set(message.owner, message.owner);
+            let message = JSON.parse(m.data);
+            console.log(`${message.owner}: ${message.data}`);
+
+            if (message.data === "has gone out to the chat") {
+                console.log("uwu")
+                const index = this.state.users.indexOf(message.owner);
+                if (index > -1) {
+                    this.setState({ users: this.state.users.splice(index, 1) })
+                }
+                console.log(index, this.state.users);
+                deletedUser = true;
             }
 
-            console.log(`${message.owner}: ${message.data}`);
             let msgs = this.state.msgs;
             msgs.push(`${message.owner}: ${message.data}`);
             this.setState({ msgs: msgs });
+
+            if (deletedUser === false) {
+                console.log(message)
+                this.setState({ users: message.users });
+                console.log(this.state.users)
+            }
         };
 
         this.ws.onopen = () => {
-            this.state.users.set(
-                sessionStorage.getItem("owner"),
+            let message = new Message(
+                "admin",
                 sessionStorage.getItem("owner")
             );
 
-            let message = new Message(
+            console.log(message);
+            this.ws.send(JSON.stringify(message));
+
+            message = new Message(
                 sessionStorage.getItem("owner"),
                 "has joined the chat"
             );
@@ -104,7 +120,8 @@ class FormChat extends React.Component {
             this.ws.send(JSON.stringify(message));
             this.setState({ value: "" });
 
-            this.state.users.delete(sessionStorage.getItem("id"));
+
+
             ev.returnValue = "";
         });
     }
@@ -134,7 +151,7 @@ class FormChat extends React.Component {
                     />
                 </label>
                 <input type="submit" value="Submit" />
-                <DisplayElementsMap elements={this.state.users} />
+                <DisplayElementsSlice elements={this.state.users} />
             </form>
         );
     }
