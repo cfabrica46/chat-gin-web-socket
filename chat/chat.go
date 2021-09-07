@@ -2,7 +2,6 @@ package chat
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -48,7 +47,6 @@ func Chat(c *gin.Context) {
 	for {
 		msg, err := receiveMessage(conn)
 		if err != nil {
-			//delete(conns, id)
 			conn.Close()
 			log.Printf("%s has gone out to the chat", conns[id].Owner)
 			return
@@ -74,14 +72,8 @@ func Chat(c *gin.Context) {
 		}
 
 		for i := range conns {
-			fmt.Printf("%s\n", data)
 			go sendMessage(conns[i].Conn, data)
 		}
-		/*
-		 *} else {
-		 *    conns[id] = myConn{Conn: conn, Owner: msg.Data}
-		 *}
-		 */
 
 	}
 }

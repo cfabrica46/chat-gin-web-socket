@@ -3,11 +3,12 @@ import ReactDOM from "react-dom";
 import "./sass/style.scss";
 
 class Message {
-    constructor(owner, data, users, byServer) {
+    constructor(owner, data, users, byServer, classMessage) {
         this.owner = owner;
         this.data = data;
         this.users = users;
         this.byServer = byServer;
+        this.className = classMessage;
     }
 }
 
@@ -31,17 +32,15 @@ function DisplayElementsSlice(props) {
     );
 }
 
-function DisplayElementsMap(props) {
-    let iterator = props.elements.values();
-    let slice = [];
-    for (const item of iterator) {
-        slice.push(item);
-    }
-    console.log(slice);
+function DisplayMessages(props) {
     return (
         <div>
-            {slice.map((e) => (
-                <h3>{e}</h3>
+            {props.messages.map((message) => (
+                <h3 className={message.classMessage}>
+                    {message.byServer
+                        ? `${message.owner} ${message.data}`
+                        : `${message.owner}: ${message.data}`}
+                </h3>
             ))}
         </div>
     );
@@ -68,17 +67,6 @@ class FormChat extends React.Component {
 
     componentDidMount() {
         this.ws.onopen = () => {
-            /*
-             *            let message = new Message(
-             *                "admin",
-             *                sessionStorage.getItem("owner"),
-             *                this.state.users,
-             *                true
-             *            );
-             *
-             *            this.ws.send(JSON.stringify(message));
-             */
-
             let message = new Message(
                 sessionStorage.getItem("owner"),
                 "has joined the chat",
@@ -91,55 +79,25 @@ class FormChat extends React.Component {
 
         this.ws.onmessage = (m) => {
             let message = JSON.parse(m.data);
-
-            /*
-             *            if (message.owner !== sessionStorage.getItem("owner")) {
-             *                if (
-             *                    message.byServer === true &&
-             *                    message.data === "has joined the chat"
-             *                ) {
-             *                    let users = this.state.users;
-             *                    users.push(message.owner);
-             *                    this.setState({ users: users });
-             *                }
-             *
-             *                if (
-             *                    message.byServer === true &&
-             *                    message.data === "has gone out to the chat"
-             *                ) {
-             *                    const index = this.state.users.indexOf(message.owner);
-             *                    if (index > -1) {
-             *                        this.setState({
-             *                            users: this.state.users.splice(index, 1),
-             *                        });
-             *                    }
-             *                }
-             *            }
-             *
-             */
             this.setState({ users: message.users });
 
-            let msgs = this.state.msgs;
-            msgs.push(`${message.owner}: ${message.data}`);
-            this.setState({ msgs: msgs });
+            if (message.byServer) {
+                message.classMessage = "message--system";
+            } else {
+                if (message.owner === sessionStorage.getItem("owner")) {
+                    message.classMessage = "message--user";
+                } else {
+                    message.classMessage = "message--other";
+                }
+            }
 
-            /*
-             *if (deletedUser === false) {
-             *    this.setState({ users: message.users });
-             *}
-             */
+            let msgs = this.state.msgs;
+            message.users = null;
+            msgs.push(message);
+            this.setState({ msgs: msgs });
         };
 
         window.addEventListener("unload", (ev) => {
-            /*
-             *const index = this.state.users.indexOf(
-             *    sessionStorage.getItem("owner")
-             *);
-             *if (index > -1) {
-             *    this.setState({ users: this.state.users.splice(index, 1) });
-             *}
-             */
-
             let message = new Message(
                 sessionStorage.getItem("owner"),
                 "has gone out to the chat",
@@ -169,7 +127,7 @@ class FormChat extends React.Component {
     render() {
         return (
             <form onSubmit={this.handleSubmit}>
-                <DisplayElementsSlice elements={this.state.msgs} />
+                <DisplayMessages messages={this.state.msgs} />
                 <label>
                     Message:
                     <input
@@ -228,9 +186,7 @@ class Form extends React.Component {
 
     handleSubmit(event) {
         event.preventDefault();
-
         sessionStorage.setItem("owner", this.state.value);
-
         ReactDOM.render(<Chat />, document.getElementById("root"));
     }
 
