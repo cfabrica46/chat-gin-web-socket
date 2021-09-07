@@ -18,9 +18,10 @@ type myConn struct {
 }
 
 type message struct {
-	Owner string   `json:"owner"`
-	Data  string   `json:"data"`
-	Users []string `json:"users"`
+	Owner    string   `json:"owner"`
+	Data     string   `json:"data"`
+	Users    []string `json:"users"`
+	ByServer bool     `json:"byServer"`
 }
 
 var upgrader = websocket.Upgrader{}
@@ -42,35 +43,47 @@ func Chat(c *gin.Context) {
 
 	id := uuid.NewString()
 
+	conns[id] = myConn{Conn: conn}
+
 	for {
 		msg, err := receiveMessage(conn)
 		if err != nil {
-			delete(conns, id)
+			//delete(conns, id)
+			conn.Close()
 			log.Printf("%s has gone out to the chat", conns[id].Owner)
 			return
 		}
 
-		if msg.Owner != "admin" {
-			users := getUsers(conns)
-			msg.Users = users
-
-			data, err := json.Marshal(msg)
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{
-					"ErrMessage": "Internal Error",
-				})
-				return
-			}
-
-			fmt.Printf("%s\n", msg)
-			for i := range conns {
-				go sendMessage(conns[i].Conn, data)
-			}
-		} else {
-			conns[id] = myConn{Conn: conn, Owner: msg.Data}
+		if msg.ByServer && msg.Data == "has joined the chat" {
+			conns[id] = myConn{Conn: conn, Owner: msg.Owner}
 		}
-	}
+		if msg.ByServer && msg.Data == "has gone out to the chat" {
+			delete(conns, id)
+		}
 
+		users := getUsers(conns)
+
+		msg.Users = users
+
+		data, err := json.Marshal(msg)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"ErrMessage": "Internal Error",
+			})
+			return
+		}
+
+		for i := range conns {
+			fmt.Printf("%s\n", data)
+			go sendMessage(conns[i].Conn, data)
+		}
+		/*
+		 *} else {
+		 *    conns[id] = myConn{Conn: conn, Owner: msg.Data}
+		 *}
+		 */
+
+	}
 }
 
 func receiveMessage(conn *websocket.Conn) (newMessage message, err error) {

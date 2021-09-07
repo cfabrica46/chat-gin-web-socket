@@ -3,10 +3,11 @@ import ReactDOM from "react-dom";
 import "./sass/style.scss";
 
 class Message {
-    constructor(owner, data, users) {
+    constructor(owner, data, users, byServer) {
         this.owner = owner;
         this.data = data;
-        this.users = users
+        this.users = users;
+        this.byServer = byServer;
     }
 }
 
@@ -66,61 +67,87 @@ class FormChat extends React.Component {
     }
 
     componentDidMount() {
+        this.ws.onopen = () => {
+            /*
+             *            let message = new Message(
+             *                "admin",
+             *                sessionStorage.getItem("owner"),
+             *                this.state.users,
+             *                true
+             *            );
+             *
+             *            this.ws.send(JSON.stringify(message));
+             */
+
+            let message = new Message(
+                sessionStorage.getItem("owner"),
+                "has joined the chat",
+                null,
+                true
+            );
+            this.ws.send(JSON.stringify(message));
+            this.setState({ value: "" });
+        };
+
         this.ws.onmessage = (m) => {
-            let deletedUser = false
-
             let message = JSON.parse(m.data);
-            console.log(`${message.owner}: ${message.data}`);
 
-            if (message.data === "has gone out to the chat") {
-                console.log("uwu")
-                const index = this.state.users.indexOf(message.owner);
-                if (index > -1) {
-                    this.setState({ users: this.state.users.splice(index, 1) })
-                }
-                console.log(index, this.state.users);
-                deletedUser = true;
-            }
+            /*
+             *            if (message.owner !== sessionStorage.getItem("owner")) {
+             *                if (
+             *                    message.byServer === true &&
+             *                    message.data === "has joined the chat"
+             *                ) {
+             *                    let users = this.state.users;
+             *                    users.push(message.owner);
+             *                    this.setState({ users: users });
+             *                }
+             *
+             *                if (
+             *                    message.byServer === true &&
+             *                    message.data === "has gone out to the chat"
+             *                ) {
+             *                    const index = this.state.users.indexOf(message.owner);
+             *                    if (index > -1) {
+             *                        this.setState({
+             *                            users: this.state.users.splice(index, 1),
+             *                        });
+             *                    }
+             *                }
+             *            }
+             *
+             */
+            this.setState({ users: message.users });
 
             let msgs = this.state.msgs;
             msgs.push(`${message.owner}: ${message.data}`);
             this.setState({ msgs: msgs });
 
-            if (deletedUser === false) {
-                console.log(message)
-                this.setState({ users: message.users });
-                console.log(this.state.users)
-            }
-        };
-
-        this.ws.onopen = () => {
-            let message = new Message(
-                "admin",
-                sessionStorage.getItem("owner")
-            );
-
-            console.log(message);
-            this.ws.send(JSON.stringify(message));
-
-            message = new Message(
-                sessionStorage.getItem("owner"),
-                "has joined the chat"
-            );
-            console.log(message);
-            this.ws.send(JSON.stringify(message));
-            this.setState({ value: "" });
+            /*
+             *if (deletedUser === false) {
+             *    this.setState({ users: message.users });
+             *}
+             */
         };
 
         window.addEventListener("unload", (ev) => {
+            /*
+             *const index = this.state.users.indexOf(
+             *    sessionStorage.getItem("owner")
+             *);
+             *if (index > -1) {
+             *    this.setState({ users: this.state.users.splice(index, 1) });
+             *}
+             */
+
             let message = new Message(
                 sessionStorage.getItem("owner"),
-                "has gone out to the chat"
+                "has gone out to the chat",
+                null,
+                true
             );
-            console.log(message);
             this.ws.send(JSON.stringify(message));
             this.setState({ value: "" });
-
-
 
             ev.returnValue = "";
         });
@@ -131,7 +158,9 @@ class FormChat extends React.Component {
 
         let message = new Message(
             sessionStorage.getItem("owner"),
-            this.state.value
+            this.state.value,
+            null,
+            false
         );
         this.ws.send(JSON.stringify(message));
         this.setState({ value: "" });
