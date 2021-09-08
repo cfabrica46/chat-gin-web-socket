@@ -149,7 +149,7 @@ class Chat extends React.Component {
         return (
             <div>
                 <Background />
-                <h1 className="title">Connected</h1>
+                <span className="title">Connected</span>
                 <FormChat handleMessage={this.handleMessage} />
             </div>
         );
@@ -192,17 +192,23 @@ class Form extends React.Component {
 
     render() {
         return (
-            <form onSubmit={this.handleSubmit}>
-                <label>
-                    Username:
-                    <input
-                        type="text"
-                        value={this.state.value}
-                        onChange={this.handleChange}
-                        required
-                    />
+            <form className="login--form" onSubmit={this.handleSubmit}>
+                <label className="label" for="username">
+                    Username
                 </label>
-                <input type="submit" value="Submit" />
+                <input
+                    name="username"
+                    className="login--input-username"
+                    type="text"
+                    value={this.state.value}
+                    onChange={this.handleChange}
+                    required
+                />
+                <input
+                    className="login--input-submit"
+                    type="submit"
+                    value="CONTINUE"
+                />
             </form>
         );
     }
@@ -213,8 +219,10 @@ class Index extends React.Component {
         return (
             <div>
                 <Background />
-                <h1 className="title">Welcome to Chat</h1>
-                <Form />
+                <main className="main">
+                    <p className="title">Welcome to Chat</p>
+                    <Form />
+                </main>
             </div>
         );
     }
