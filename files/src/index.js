@@ -46,6 +46,23 @@ function DisplayMessages(props) {
     );
 }
 
+/*
+ *function Ping(ws) {
+ *    if (!ws) return;
+ *    if (ws.readyState !== 1) return;
+ *
+ *    let message = new Message(
+ *        sessionStorage.getItem("owner"),
+ *        "ping",
+ *        null,
+ *        true
+ *    );
+ *
+ *    console.log(message.data);
+ *    ws.send(JSON.stringify(message));
+ *}
+ */
+
 class FormChat extends React.Component {
     constructor(props) {
         super(props);
@@ -78,11 +95,14 @@ class FormChat extends React.Component {
         };
 
         this.ws.onmessage = (m) => {
+            let ping = false;
             let message = JSON.parse(m.data);
-            this.setState({ users: message.users });
 
             if (message.byServer) {
                 message.classMessage = "message--system";
+                if (message.data === "ping") {
+                    ping = true;
+                }
             } else {
                 if (message.owner === sessionStorage.getItem("owner")) {
                     message.classMessage = "message--user";
@@ -91,24 +111,31 @@ class FormChat extends React.Component {
                 }
             }
 
-            let msgs = this.state.msgs;
-            message.users = null;
-            msgs.push(message);
-            this.setState({ msgs: msgs });
+            if (!ping) {
+                this.setState({ users: message.users });
+
+                let msgs = this.state.msgs;
+                message.users = null;
+                msgs.push(message);
+                this.setState({ msgs: msgs });
+            }
         };
 
-        window.addEventListener("unload", (ev) => {
+        this.ws.onclose = (event) => {
             let message = new Message(
                 sessionStorage.getItem("owner"),
                 "has gone out to the chat",
                 null,
                 true
             );
-            this.ws.send(JSON.stringify(message));
-            this.setState({ value: "" });
 
-            ev.returnValue = "";
-        });
+            let msgs = this.state.msgs;
+            message.users = null;
+            msgs.push(message);
+            this.setState({ msgs: msgs });
+            this.setState({ value: "" });
+            console.log("The connection has been closed successfully.");
+        };
     }
 
     handleSubmit(event) {
