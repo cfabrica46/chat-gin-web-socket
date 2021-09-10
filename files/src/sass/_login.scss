@@ -1,16 +1,32 @@
 @import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
 
 .main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     margin: 50px 20px;
     padding: 20px;
 
+    .title--login {
+        $text: "welcome to chat";
+        &:after {
+            content: $text;
+        }
+        &:before {
+            content: $text;
+        }
+    }
+
+    .title--chat {
+        $text: "Connected";
+        &:after {
+            content: $text;
+        }
+        &:before {
+            content: $text;
+        }
+    }
+
     .title {
         margin: 0;
-        $text: "welcome to chat";
-        position: relative;
+        position: absolute;
         $stroke-width: 35px * 0.2;
         font-family: "Pacifico", cursive;
         text-transform: uppercase;
@@ -19,9 +35,10 @@
         text-align: center;
         -webkit-text-stroke-width: $stroke-width;
         margin-bottom: 50px;
+        left: 50%;
+        transform: translateX(-50%);
 
         &:after {
-            content: $text;
             position: absolute;
             top: 0;
             left: 0;
@@ -31,7 +48,6 @@
 
         &:before {
             z-index: -1;
-            content: $text;
             position: absolute;
             top: 0;
             left: 0;
@@ -40,13 +56,20 @@
         }
     }
 
-    .login--form {
-        position: relative;
+    .form {
+        position: absolute;
+        box-sizing: border-box;
         background-color: white;
         padding: 40px;
-        width: 250px;
-        height: 100px;
         border-radius: 5px;
+        left: 50%;
+        transform: translatex(-50%);
+    }
+
+    .form-login {
+        top: 300px;
+        width: 350px;
+        height: 190px;
 
         .label {
             display: block;
@@ -55,7 +78,7 @@
             font-weight: bold;
         }
 
-        .login--input-username {
+        .form--input-username {
             display: block;
             position: absolute;
             left: 50%;
@@ -69,7 +92,7 @@
             }
         }
 
-        .login--input-submit {
+        .form--input-submit {
             cursor: pointer;
             position: absolute;
             top: 120px;
@@ -87,5 +110,11 @@
                 background-color: #01627a;
             }
         }
+    }
+
+    .form-message {
+        top: 200px;
+        height: 60%;
+        width: 80%;
     }
 }

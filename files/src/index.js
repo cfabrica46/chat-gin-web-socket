@@ -153,18 +153,24 @@ class FormChat extends React.Component {
 
     render() {
         return (
-            <form onSubmit={this.handleSubmit}>
+            <form className="form form-message" onSubmit={this.handleSubmit}>
                 <DisplayMessages messages={this.state.msgs} />
-                <label>
-                    Message:
-                    <input
-                        type="text"
-                        value={this.state.value}
-                        onChange={this.handleChange}
-                        required
-                    />
+                <label className="label" for="message">
+                    message
                 </label>
-                <input type="submit" value="Submit" />
+                <input
+                    className="form--input-message"
+                    type="text"
+                    name="message"
+                    value={this.state.value}
+                    onChange={this.handleChange}
+                    required
+                />
+                <input
+                    className="form--input-submit"
+                    type="submit"
+                    value="Submit"
+                />
                 <DisplayElementsSlice elements={this.state.users} />
             </form>
         );
@@ -176,8 +182,10 @@ class Chat extends React.Component {
         return (
             <div>
                 <Background />
-                <span className="title">Connected</span>
-                <FormChat handleMessage={this.handleMessage} />
+                <main className="main">
+                    <p className="title title--chat">Connected</p>
+                    <FormChat handleMessage={this.handleMessage} />
+                </main>
             </div>
         );
     }
@@ -219,20 +227,20 @@ class Form extends React.Component {
 
     render() {
         return (
-            <form className="login--form" onSubmit={this.handleSubmit}>
+            <form className="form form-login" onSubmit={this.handleSubmit}>
                 <label className="label" for="username">
                     Username
                 </label>
                 <input
                     name="username"
-                    className="login--input-username"
+                    className="form--input-username"
                     type="text"
                     value={this.state.value}
                     onChange={this.handleChange}
                     required
                 />
                 <input
-                    className="login--input-submit"
+                    className="form--input-submit"
                     type="submit"
                     value="CONTINUE"
                 />
@@ -247,7 +255,7 @@ class Index extends React.Component {
             <div>
                 <Background />
                 <main className="main">
-                    <p className="title">Welcome to Chat</p>
+                    <p className="title title--login">Welcome to Chat</p>
                     <Form />
                 </main>
             </div>
