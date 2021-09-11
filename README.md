@@ -11,3 +11,15 @@ SCHEME=ws
 
 ### IMPORTANT!
 If you don't configurate .env the server will have wss://cfabrica46-chat.herokuapp.com as host
+
+
+## Run With Docker
+### Compile
+~~~
+docker build -t chat .
+~~~
+
+### Execute
+~~~
+docker run --name chat -p 8080:8080 chat
+~~~

@@ -1,8 +1,7 @@
-package chat
+package handler
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"time"
 
@@ -24,11 +23,11 @@ type message struct {
 }
 
 var upgrader = websocket.Upgrader{}
-var owner string
 
 var conns = make(map[string]myConn)
 
 func Chat(c *gin.Context) {
+	var owner string
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
@@ -45,18 +44,21 @@ func Chat(c *gin.Context) {
 	go ping(conn)
 
 	for {
-		//send error disconect
 		msg, err := receiveMessage(conn)
 		if err != nil {
-			log.Printf("%s has gone out to the chat", conns[id].Owner)
 			delete(conns, id)
+
 			users := getUsers(conns)
-			var m = message{Owner: owner, Data: "has gone out to the chat", Users: users, ByServer: false}
-			data, _ := json.Marshal(m)
+			m := message{Owner: owner, Data: "has gone out to the chat", Users: users, ByServer: false}
+
+			data, err := json.Marshal(m)
+			if err != nil {
+				data = []byte("")
+			}
+
 			for i := range conns {
 				go sendMessage(conns[i].Conn, data)
 			}
-
 			return
 		}
 
@@ -111,7 +113,7 @@ func getUsers(m map[string]myConn) (users []string) {
 	return
 }
 
-func ping(conn *websocket.Conn) (err error) {
+func ping(conn *websocket.Conn) {
 	var msg = message{Data: "ping", ByServer: true}
 	dataJSON, err := json.Marshal(msg)
 	if err != nil {
@@ -119,7 +121,7 @@ func ping(conn *websocket.Conn) (err error) {
 	}
 
 	for {
-		time.Sleep(time.Second * 30)
+		time.Sleep(time.Second * 2)
 		err = sendMessage(conn, dataJSON)
 		if err != nil {
 			return
