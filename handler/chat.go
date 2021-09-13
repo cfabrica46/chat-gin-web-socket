@@ -49,7 +49,7 @@ func Chat(c *gin.Context) {
 			delete(conns, id)
 
 			users := getUsers(conns)
-			m := message{Owner: owner, Data: "has gone out to the chat", Users: users, ByServer: false}
+			m := message{Owner: owner, Data: "has gone out to the chat", Users: users, ByServer: true}
 
 			data, err := json.Marshal(m)
 			if err != nil {

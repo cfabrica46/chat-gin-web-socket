@@ -170,9 +170,12 @@
             .chat-input--submit {
                 box-sizing: border-box;
                 border: 2px solid $deathColor;
+                border-radius: 5px;
                 position: absolute;
                 right: 3%;
                 cursor: pointer;
+                background-color: $darkColor;
+                color: white;
             }
         }
     }
