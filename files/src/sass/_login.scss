@@ -60,22 +60,24 @@
         position: absolute;
         box-sizing: border-box;
         background-color: white;
-        padding: 40px;
         border-radius: 5px;
         left: 50%;
         transform: translatex(-50%);
+        border: 3px solid $deathColor;
     }
 
     .form-login {
         top: 300px;
         width: 350px;
         height: 190px;
+        padding: 40px;
 
         .label {
             display: block;
             margin-bottom: 10px;
             font-family: Courier;
             font-weight: bold;
+            color: $darkColor;
         }
 
         .form--input-username {
@@ -84,8 +86,9 @@
             left: 50%;
             transform: translateX(-50%);
             width: 75%;
-            border: 1px solid #ccc;
+            border: 1px solid $deathColor;
             transition: ease 0.3s, border 0.3s;
+            color: $darkColor;
 
             &:focus {
                 border: 1px solid $secundaryColor;
@@ -116,5 +119,61 @@
         top: 200px;
         height: 60%;
         width: 80%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        padding: 10px;
+        gap: 10px;
+
+        .chat-number-users {
+            font-weight: bold;
+            height: 10%;
+            margin-bottom: 20px;
+            color: $darkColor;
+            text-align: center;
+            .chat-number-users-text {
+                font-family: Courier;
+                font-size: 1.4em;
+            }
+        }
+
+        .chat-msgs {
+            box-sizing: border-box;
+            height: 70%;
+            overflow-y: scroll;
+            padding: 0 10px;
+            border: 2px solid $deathColor;
+            border-radius: 5px;
+            .chat-msg {
+                font-family: Courier;
+            }
+            .chat-msg--system {
+                text-align: center;
+            }
+            .chat-msg--other {
+                color: $deathColor;
+            }
+            .chat-msg--user {
+                text-align: right;
+                color: $secundaryColor;
+            }
+        }
+
+        .chat-input {
+            height: 10%;
+            .chat-input--message {
+                box-sizing: border-box;
+                border: 2px solid $deathColor;
+                position: absolute;
+                width: 80%;
+            }
+            .chat-input--submit {
+                box-sizing: border-box;
+                border: 2px solid $deathColor;
+                position: absolute;
+                right: 3%;
+                cursor: pointer;
+            }
+        }
     }
 }

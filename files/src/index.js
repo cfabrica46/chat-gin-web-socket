@@ -22,9 +22,19 @@ function Background() {
     );
 }
 
-function DisplayElementsSlice(props) {
+function DisplayNumberUsers(props) {
     return (
-        <div>
+        <div className="chat-number-users">
+            <p className="chat-number-users-text">
+                Users Connected: {props.elements.length}
+            </p>
+        </div>
+    );
+}
+
+function DisplayUsers(props) {
+    return (
+        <div className="chat-users">
             {props.elements.map((e) => (
                 <h3>{e}</h3>
             ))}
@@ -34,9 +44,9 @@ function DisplayElementsSlice(props) {
 
 function DisplayMessages(props) {
     return (
-        <div>
+        <div className="chat-msgs">
             {props.messages.map((message) => (
-                <h3 className={message.classMessage}>
+                <h3 className={`chat-msg ${message.classMessage}`}>
                     {message.byServer
                         ? `${message.owner} ${message.data}`
                         : `${message.owner}: ${message.data}`}
@@ -45,23 +55,6 @@ function DisplayMessages(props) {
         </div>
     );
 }
-
-/*
- *function Ping(ws) {
- *    if (!ws) return;
- *    if (ws.readyState !== 1) return;
- *
- *    let message = new Message(
- *        sessionStorage.getItem("owner"),
- *        "ping",
- *        null,
- *        true
- *    );
- *
- *    console.log(message.data);
- *    ws.send(JSON.stringify(message));
- *}
- */
 
 class FormChat extends React.Component {
     constructor(props) {
@@ -99,15 +92,15 @@ class FormChat extends React.Component {
             let message = JSON.parse(m.data);
 
             if (message.byServer) {
-                message.classMessage = "message--system";
+                message.classMessage = "chat-msg--system";
                 if (message.data === "ping") {
                     ping = true;
                 }
             } else {
                 if (message.owner === sessionStorage.getItem("owner")) {
-                    message.classMessage = "message--user";
+                    message.classMessage = "chat-msg--user";
                 } else {
-                    message.classMessage = "message--other";
+                    message.classMessage = "chat-msg--other";
                 }
             }
 
@@ -154,24 +147,23 @@ class FormChat extends React.Component {
     render() {
         return (
             <form className="form form-message" onSubmit={this.handleSubmit}>
+                <DisplayNumberUsers elements={this.state.users} />
                 <DisplayMessages messages={this.state.msgs} />
-                <label className="label" for="message">
-                    message
-                </label>
-                <input
-                    className="form--input-message"
-                    type="text"
-                    name="message"
-                    value={this.state.value}
-                    onChange={this.handleChange}
-                    required
-                />
-                <input
-                    className="form--input-submit"
-                    type="submit"
-                    value="Submit"
-                />
-                <DisplayElementsSlice elements={this.state.users} />
+                <div className="chat-input">
+                    <input
+                        className="chat-input--message"
+                        type="text"
+                        name="message"
+                        value={this.state.value}
+                        onChange={this.handleChange}
+                        required
+                    />
+                    <input
+                        className="chat-input--submit"
+                        type="submit"
+                        value="Submit"
+                    />
+                </div>
             </form>
         );
     }
