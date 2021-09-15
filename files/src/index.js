@@ -24,7 +24,7 @@ function Background() {
 
 function DisplayNumberUsers(props) {
     return (
-        <div className="chat-number-users">
+        <div onClick={() => props.onClick()} className="chat-number-users">
             <p className="chat-number-users-text">
                 Users Connected: {props.elements.length}
             </p>
@@ -35,9 +35,12 @@ function DisplayNumberUsers(props) {
 function DisplayUsers(props) {
     return (
         <div className="chat-users">
-            {props.elements.map((e) => (
-                <h3>{e}</h3>
-            ))}
+            <h1>Users Connected</h1>
+            <ul className="list-users">
+                {props.elements.map((e) => (
+                    <li> {e}</li>
+                ))}
+            </ul>
         </div>
     );
 }
@@ -63,16 +66,23 @@ class FormChat extends React.Component {
             value: "",
             msgs: [],
             users: [],
+            showUsers: false,
         };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleShowUsers = this.handleShowUsers.bind(this);
     }
 
     ws = new WebSocket(`${localStorage.getItem("host")}/api/v1/chat`);
 
     handleChange(event) {
         this.setState({ value: event.target.value });
+    }
+
+    handleShowUsers() {
+        this.setState({ showUsers: true });
+        console.log(this.state.showUsers);
     }
 
     componentDidMount() {
@@ -146,25 +156,37 @@ class FormChat extends React.Component {
 
     render() {
         return (
-            <form className="form form-message" onSubmit={this.handleSubmit}>
-                <DisplayNumberUsers elements={this.state.users} />
-                <DisplayMessages messages={this.state.msgs} />
-                <div className="chat-input">
-                    <input
-                        className="chat-input--message"
-                        type="text"
-                        name="message"
-                        value={this.state.value}
-                        onChange={this.handleChange}
-                        required
+            <div className="chat">
+                <form
+                    className="form form-message"
+                    onSubmit={this.handleSubmit}
+                >
+                    <DisplayNumberUsers
+                        onClick={() => this.handleShowUsers()}
+                        elements={this.state.users}
+                        showUsers={this.state.showUsers}
                     />
-                    <input
-                        className="chat-input--submit"
-                        type="submit"
-                        value="Submit"
-                    />
-                </div>
-            </form>
+                    <DisplayMessages messages={this.state.msgs} />
+                    <div className="chat-input">
+                        <input
+                            className="chat-input--message"
+                            type="text"
+                            name="message"
+                            value={this.state.value}
+                            onChange={this.handleChange}
+                            required
+                        />
+                        <input
+                            className="chat-input--submit"
+                            type="submit"
+                            value="Submit"
+                        />
+                    </div>
+                </form>
+                {this.state.showUsers && (
+                    <DisplayUsers elements={this.state.users} />
+                )}
+            </div>
         );
     }
 }
