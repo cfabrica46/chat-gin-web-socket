@@ -1,6 +1,4 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import "./sass/style.scss";
 
 class Message {
     constructor(owner, data, users, byServer, classMessage) {
@@ -12,19 +10,9 @@ class Message {
     }
 }
 
-function Background() {
-    return (
-        <span>
-            <span className="bg"></span>
-            <span className="bg bg2"></span>
-            <span className="bg bg3"></span>
-        </span>
-    );
-}
-
 function DisplayNumberUsers(props) {
     return (
-        <div onClick={() => props.onClick()} className="chat-number-users">
+        <div onClick={() => props.onClickShow()} className="chat-number-users">
             <p className="chat-number-users-text">
                 Users Connected: {props.elements.length}
             </p>
@@ -35,10 +23,11 @@ function DisplayNumberUsers(props) {
 function DisplayUsers(props) {
     return (
         <div className="chat-users">
-            <h1>Users Connected</h1>
-            <ul className="list-users">
+            <i onClick={() => props.onClickOcult()} class="fas fa-times"></i>
+            <p className="chat-users--title">Users Connected</p>
+            <ul className="chat-users--list">
                 {props.elements.map((e) => (
-                    <li> {e}</li>
+                    <li className="chat-users--user"> {e}</li>
                 ))}
             </ul>
         </div>
@@ -72,6 +61,7 @@ class FormChat extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleShowUsers = this.handleShowUsers.bind(this);
+        this.handleOcultUsers = this.handleOcultUsers.bind(this);
     }
 
     ws = new WebSocket(`${localStorage.getItem("host")}/api/v1/chat`);
@@ -82,7 +72,10 @@ class FormChat extends React.Component {
 
     handleShowUsers() {
         this.setState({ showUsers: true });
-        console.log(this.state.showUsers);
+    }
+
+    handleOcultUsers() {
+        this.setState({ showUsers: false });
     }
 
     componentDidMount() {
@@ -124,7 +117,7 @@ class FormChat extends React.Component {
             }
         };
 
-        this.ws.onclose = (event) => {
+        this.ws.onclose = () => {
             let message = new Message(
                 sessionStorage.getItem("owner"),
                 "has gone out to the chat",
@@ -162,13 +155,15 @@ class FormChat extends React.Component {
                     onSubmit={this.handleSubmit}
                 >
                     <DisplayNumberUsers
-                        onClick={() => this.handleShowUsers()}
+                        onClickShow={() => this.handleShowUsers()}
+                        onClickOcult={() => this.handleOcultUsers()}
                         elements={this.state.users}
                         showUsers={this.state.showUsers}
                     />
                     <DisplayMessages messages={this.state.msgs} />
                     <div className="chat-input">
                         <input
+                            autoFocus
                             className="chat-input--message"
                             type="text"
                             name="message"
@@ -184,97 +179,15 @@ class FormChat extends React.Component {
                     </div>
                 </form>
                 {this.state.showUsers && (
-                    <DisplayUsers elements={this.state.users} />
+                    <DisplayUsers
+                        onClickOcult={() => this.handleOcultUsers()}
+                        elements={this.state.users}
+                    />
                 )}
             </div>
         );
     }
 }
 
-class Chat extends React.Component {
-    render() {
-        return (
-            <div>
-                <Background />
-                <main className="main">
-                    <p className="title title--chat">Connected</p>
-                    <FormChat handleMessage={this.handleMessage} />
-                </main>
-            </div>
-        );
-    }
-}
+export { FormChat };
 
-class Form extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { value: "" };
-
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    componentDidMount() {
-        fetch("/api/v1/host", {
-            method: "GET",
-        })
-            .then((responsive) => {
-                if (responsive.status >= 400) {
-                    throw true;
-                }
-                return responsive.json();
-            })
-            .then((resp) => {
-                localStorage.setItem("host", resp);
-            });
-    }
-
-    handleChange(event) {
-        this.setState({ value: event.target.value });
-    }
-
-    handleSubmit(event) {
-        event.preventDefault();
-        sessionStorage.setItem("owner", this.state.value);
-        ReactDOM.render(<Chat />, document.getElementById("root"));
-    }
-
-    render() {
-        return (
-            <form className="form form-login" onSubmit={this.handleSubmit}>
-                <label className="label" for="username">
-                    Username
-                </label>
-                <input
-                    name="username"
-                    className="form--input-username"
-                    type="text"
-                    value={this.state.value}
-                    onChange={this.handleChange}
-                    required
-                />
-                <input
-                    className="form--input-submit"
-                    type="submit"
-                    value="CONTINUE"
-                />
-            </form>
-        );
-    }
-}
-
-class Index extends React.Component {
-    render() {
-        return (
-            <div>
-                <Background />
-                <main className="main">
-                    <p className="title title--login">Welcome to Chat</p>
-                    <Form />
-                </main>
-            </div>
-        );
-    }
-}
-
-ReactDOM.render(<Index />, document.getElementById("root"));
