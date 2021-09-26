@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/cfabrica46/chat-gin-web-socket/structure"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -24,10 +25,23 @@ type message struct {
 
 var upgrader = websocket.Upgrader{}
 
+var rooms = make(map[string]map[string]myConn)
 var conns = make(map[string]myConn)
 
 func Chat(c *gin.Context) {
 	var owner string
+
+	var loginStruct structure.LoginStruct
+
+	err := c.BindJSON(&loginStruct)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"ErrMessage": "Internal Error",
+		})
+		return
+	}
+
+	owner = loginStruct.Username
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
@@ -39,7 +53,9 @@ func Chat(c *gin.Context) {
 	defer conn.Close()
 
 	id := uuid.NewString()
-	conns[id] = myConn{Conn: conn}
+	conns[id] = myConn{Conn: conn, Owner: owner}
+
+	rooms[loginStruct.IDRoom] = conns
 
 	go ping(conn)
 
@@ -56,16 +72,18 @@ func Chat(c *gin.Context) {
 				data = []byte("")
 			}
 
-			for i := range conns {
+			for i := range rooms[loginStruct.IDRoom] {
 				go sendMessage(conns[i].Conn, data)
 			}
 			return
 		}
 
-		if msg.ByServer && msg.Data == "has joined the chat" {
-			conns[id] = myConn{Conn: conn, Owner: msg.Owner}
-			owner = msg.Owner
-		}
+		/*
+		 *if msg.ByServer && msg.Data == "has joined the chat" {
+		 *    conns[id] = myConn{Conn: conn, Owner: msg.Owner}
+		 *    owner = msg.Owner
+		 *}
+		 */
 		if msg.ByServer && msg.Data == "has gone out to the chat" {
 			delete(conns, id)
 			return
@@ -83,7 +101,7 @@ func Chat(c *gin.Context) {
 			return
 		}
 
-		for i := range conns {
+		for i := range rooms[loginStruct.IDRoom] {
 			go sendMessage(conns[i].Conn, data)
 		}
 

@@ -1,13 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Chat } from "./chat.js";
+import { Chat } from "./chat";
 
 class Form extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { value: "" };
+        this.state = {
+            formData: {
+                username: "",
+                room: "",
+            },
+        };
 
-        this.handleChange = this.handleChange.bind(this);
+        this.handleChangeUsername = this.handleChangeUsername.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
@@ -26,11 +31,16 @@ class Form extends React.Component {
             });
     }
 
-    handleChange(event) {
-        this.setState({ value: event.target.value });
+    handleChangeUsername(event) {
+        this.setState({ formData: { username: event.target.value } });
+    }
+
+    handleChangeRoom(event) {
+        this.setState({ formData: { room: event.target.value } });
     }
 
     handleSubmit(event) {
+        //fetch to login
         event.preventDefault();
         sessionStorage.setItem("owner", this.state.value);
         ReactDOM.render(<Chat />, document.getElementById("root"));
@@ -47,8 +57,20 @@ class Form extends React.Component {
                     name="username"
                     className="form--input-username"
                     type="text"
-                    value={this.state.value}
-                    onChange={this.handleChange}
+                    value={this.state.formData.username}
+                    onChange={this.handleChangeUsername}
+                    required
+                />
+                <label className="label" for="room">
+                    ID Room
+                </label>
+                <input
+                    autoFocus
+                    name="room"
+                    className="form--input-room"
+                    type="text"
+                    value={this.state.formData.room}
+                    onChange={this.handleChangeRoom}
                     required
                 />
                 <input

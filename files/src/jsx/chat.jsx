@@ -1,5 +1,5 @@
 import React from "react";
-import { FormChat } from "./form_chat.js";
+import { FormChat } from "./form_chat";
 import { Background } from "./background";
 
 class Chat extends React.Component {
@@ -17,3 +17,4 @@ class Chat extends React.Component {
 }
 
 export { Chat };
+

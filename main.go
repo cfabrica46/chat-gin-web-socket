@@ -26,6 +26,7 @@ func main() {
 	r.Use(static.Serve("/", static.LocalFile("./files", false)))
 	s := r.Group("/api/v1")
 	{
+		s.POST("/login", handler.Login)
 		s.GET("/chat", handler.Chat)
 		s.GET("/host", handler.GetHost)
 	}

@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./../sass/style.scss";
-import { Form } from "./form.js";
+import { Form } from "./form";
 import { Background } from "./background";
 
 class Index extends React.Component {
