@@ -28,5 +28,6 @@ func main() {
 		s.GET("/chat", handler.Chat)
 		s.GET("/host", handler.GetHost)
 	}
-	r.Run(":" + os.Getenv("PORT"))
+	r.RunTLS(":"+os.Getenv("PORT"), "server.crt", "server.key")
+	//r.Run(":" + os.Getenv("PORT"))
 }
