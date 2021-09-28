@@ -9,7 +9,11 @@ class Chat extends React.Component {
                 <Background />
                 <main className="main">
                     <p className="title title--chat">Connected</p>
-                    <FormChat handleMessage={this.handleMessage} />
+                    <FormChat
+                        handleMessage={this.handleMessage}
+                        owner={this.props.username}
+                        idRoom={this.props.idRoom}
+                    />
                 </main>
             </div>
         );
@@ -17,4 +21,3 @@ class Chat extends React.Component {
 }
 
 export { Chat };
-

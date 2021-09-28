@@ -14,7 +14,8 @@ function DisplayNumberUsers(props) {
     return (
         <div onClick={() => props.onClickShow()} className="chat-number-users">
             <p className="chat-number-users-text">
-                Users Connected: {props.elements.length}
+                ID Room: {props.idRoom} | Users Connected:{" "}
+                {props.elements.length}
             </p>
         </div>
     );
@@ -81,7 +82,16 @@ class FormChat extends React.Component {
     componentDidMount() {
         this.ws.onopen = () => {
             let message = new Message(
-                sessionStorage.getItem("owner"),
+                this.props.owner,
+                `idRoom:${this.props.idRoom}`,
+                null,
+                true
+            );
+            this.ws.send(JSON.stringify(message));
+            this.setState({ value: "" });
+
+            message = new Message(
+                this.props.owner,
                 "has joined the chat",
                 null,
                 true
@@ -100,7 +110,7 @@ class FormChat extends React.Component {
                     ping = true;
                 }
             } else {
-                if (message.owner === sessionStorage.getItem("owner")) {
+                if (message.owner === this.props.owner) {
                     message.classMessage = "chat-msg--user";
                 } else {
                     message.classMessage = "chat-msg--other";
@@ -119,7 +129,7 @@ class FormChat extends React.Component {
 
         this.ws.onclose = () => {
             let message = new Message(
-                sessionStorage.getItem("owner"),
+                this.props.owner,
                 "has gone out to the chat",
                 null,
                 true
@@ -138,7 +148,7 @@ class FormChat extends React.Component {
         event.preventDefault();
 
         let message = new Message(
-            sessionStorage.getItem("owner"),
+            this.props.owner,
             this.state.value,
             null,
             false
@@ -159,6 +169,7 @@ class FormChat extends React.Component {
                         onClickOcult={() => this.handleOcultUsers()}
                         elements={this.state.users}
                         showUsers={this.state.showUsers}
+                        idRoom={this.props.idRoom}
                     />
                     <DisplayMessages messages={this.state.msgs} />
                     <div className="chat-input">
@@ -190,4 +201,3 @@ class FormChat extends React.Component {
 }
 
 export { FormChat };
-

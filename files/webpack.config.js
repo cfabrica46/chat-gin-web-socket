@@ -10,7 +10,7 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.jsx$/,
+                test: /\.(jsx|js)$/,
                 use: {
                     loader: "babel-loader",
                     options: {
@@ -26,7 +26,7 @@ module.exports = {
         ],
     },
     resolve: {
-        extensions: [".jsx"],
+        extensions: [".js", ".jsx"],
     },
     plugins: [
         new MiniCssExtractPlugin({

@@ -67,11 +67,11 @@
     }
 
     .form-login {
-        top: 50%;
+        top: 55%;
         transform: translate(-50%, -50%);
         width: 350px;
-        height: 190px;
-        padding: 40px;
+        height: 210px;
+        padding: 30px 40px;
 
         .label {
             display: block;
@@ -81,16 +81,13 @@
             color: $darkColor;
         }
 
-        .form--input-username {
+        .form--input-text {
             display: block;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 75%;
+            width: 100%;
             border: 1px solid $deathColor;
             transition: ease 0.3s, border 0.3s;
             color: $darkColor;
+            margin-bottom: 15px;
 
             &:focus {
                 border: 1px solid $secundaryColor;
@@ -99,11 +96,8 @@
 
         .form--input-submit {
             cursor: pointer;
-            position: absolute;
-            top: 120px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 75%;
+            bottom: 20px;
+            width: 102%;
             height: 35px;
             background-color: $darkColor;
             border: 1px solid $darkColor;

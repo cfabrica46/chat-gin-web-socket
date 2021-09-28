@@ -6,13 +6,12 @@ class Form extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            formData: {
-                username: "",
-                room: "",
-            },
+            username: "",
+            idRoom: "",
         };
 
         this.handleChangeUsername = this.handleChangeUsername.bind(this);
+        this.handleChangeRoom = this.handleChangeRoom.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
@@ -32,18 +31,20 @@ class Form extends React.Component {
     }
 
     handleChangeUsername(event) {
-        this.setState({ formData: { username: event.target.value } });
+        this.setState({ username: event.target.value });
     }
 
     handleChangeRoom(event) {
-        this.setState({ formData: { room: event.target.value } });
+        this.setState({ idRoom: event.target.value });
     }
 
     handleSubmit(event) {
-        //fetch to login
         event.preventDefault();
-        sessionStorage.setItem("owner", this.state.value);
-        ReactDOM.render(<Chat />, document.getElementById("root"));
+
+        ReactDOM.render(
+            <Chat username={this.state.username} idRoom={this.state.idRoom} />,
+            document.getElementById("root")
+        );
     }
 
     render() {
@@ -55,9 +56,9 @@ class Form extends React.Component {
                 <input
                     autoFocus
                     name="username"
-                    className="form--input-username"
+                    className="form--input-text"
                     type="text"
-                    value={this.state.formData.username}
+                    value={this.state.username}
                     onChange={this.handleChangeUsername}
                     required
                 />
@@ -67,9 +68,9 @@ class Form extends React.Component {
                 <input
                     autoFocus
                     name="room"
-                    className="form--input-room"
+                    className="form--input-text"
                     type="text"
-                    value={this.state.formData.room}
+                    value={this.state.room}
                     onChange={this.handleChangeRoom}
                     required
                 />
