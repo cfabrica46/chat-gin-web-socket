@@ -24,6 +24,7 @@ type message struct {
 	Message         string   `json:"message"`
 	UsersConnected  []string `json:"usersConnected"`
 	IsStatusMessage bool     `json:"isStatusMessage"`
+	Owner           string   `json:"owner"`
 }
 
 var upgrader = websocket.Upgrader{}
@@ -32,8 +33,8 @@ var rooms = make(map[string]map[string]myConn)
 
 func Chat(c *gin.Context) {
 	var idRoom, myID string
-	var myToken string
-	// var ocult bool
+	var myToken, owner string
+	var ocult bool
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
@@ -49,7 +50,7 @@ func Chat(c *gin.Context) {
 	go ping(conn)
 
 	for {
-		// ocult = false
+		ocult = false
 		msg, err := receiveMessage(conn)
 		if err != nil {
 			if idRoom == "" {
@@ -59,7 +60,7 @@ func Chat(c *gin.Context) {
 			delete(rooms[idRoom], myID)
 
 			users := getUsersIntoRoom(rooms[idRoom])
-			m := message{Token: myToken, Message: "has gone out to the chat", UsersConnected: users, IsStatusMessage: true}
+			m := message{Token: myToken, Message: "has gone out to the chat", UsersConnected: users, IsStatusMessage: true, Owner: owner}
 
 			msgJSON, err := json.Marshal(m)
 			if err != nil {
@@ -67,7 +68,7 @@ func Chat(c *gin.Context) {
 			}
 
 			for i := range rooms[idRoom] {
-				go sendMessage(rooms[idRoom][i].Conn, msgJSON)
+				sendMessage(rooms[idRoom][i].Conn, msgJSON)
 			}
 			return
 		}
@@ -77,11 +78,11 @@ func Chat(c *gin.Context) {
 		}
 
 		if msg.IsStatusMessage && strings.Contains(msg.Message, "idRoom:") && idRoom == "" {
-			idRoom, myToken, err = asignChatVariables(conn, msg, myID)
+			idRoom, myToken, owner, err = asignChatVariables(conn, msg, myID)
 			if err != nil {
 				return
 			}
-			// ocult = true
+			ocult = true
 		}
 
 		if msg.IsStatusMessage && msg.Message == "has gone out to the chat" && myToken == msg.Token {
@@ -92,8 +93,7 @@ func Chat(c *gin.Context) {
 		users := getUsersIntoRoom(rooms[idRoom])
 
 		msg.UsersConnected = users
-
-		fmt.Println(msg)
+		msg.Owner = owner
 
 		dataJSON, err := json.Marshal(msg)
 		if err != nil {
@@ -103,15 +103,11 @@ func Chat(c *gin.Context) {
 			return
 		}
 
-		fmt.Println(rooms)
-
-		fmt.Println()
-		// if !ocult {
-		for i := range rooms[idRoom] {
-			fmt.Println(i)
-			sendMessage(rooms[idRoom][i].Conn, dataJSON)
+		if !ocult {
+			for i := range rooms[idRoom] {
+				go sendMessage(rooms[idRoom][i].Conn, dataJSON)
+			}
 		}
-		// }
 
 	}
 }
@@ -139,13 +135,9 @@ func getUsersIntoRoom(room map[string]myConn) (users []string) {
 	return
 }
 
-func asignChatVariables(conn *websocket.Conn, msg message, myID string) (idRoom, myToken string, err error) {
+func asignChatVariables(conn *websocket.Conn, msg message, myID string) (idRoom, myToken, owner string, err error) {
 	hash := sha256.Sum256([]byte(msg.Message))
 	idRoom = fmt.Sprintf("%x\n", hash)
-
-	if rooms[idRoom] != nil {
-		return
-	}
 
 	myToken = msg.Token
 
@@ -153,6 +145,8 @@ func asignChatVariables(conn *websocket.Conn, msg message, myID string) (idRoom,
 	if err != nil {
 		return
 	}
+
+	owner = tokenStructure.Username
 
 	if len(rooms[idRoom]) == 0 {
 		rooms[idRoom] = make(map[string]myConn)

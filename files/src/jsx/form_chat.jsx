@@ -1,12 +1,20 @@
 import React from "react";
 
 class Message {
-    constructor(token, message, usersConnected, isStatusMessage, classMessage) {
+    constructor(
+        token,
+        message,
+        usersConnected,
+        isStatusMessage,
+        classMessage,
+        owner
+    ) {
         this.token = token;
         this.message = message;
         this.usersConnected = usersConnected;
         this.isStatusMessage = isStatusMessage;
         this.classMessage = classMessage;
+        this.owner = owner;
     }
 }
 
@@ -41,8 +49,8 @@ function DisplayMessages(props) {
             {props.messages.map((message) => (
                 <h3 className={`chat-msg ${message.classMessage}`}>
                     {message.byServer
-                        ? `cesar ${message.message}`
-                        : `cesar: ${message.message}`}
+                        ? `${message.owner} ${message.message}`
+                        : `${message.owner}: ${message.message}`}
                 </h3>
             ))}
         </div>
@@ -108,12 +116,14 @@ class FormChat extends React.Component {
             }
 
             if (!ping) {
-                this.setState({ users: message.users });
+                this.setState({ users: message.usersConnected });
                 let msgs = this.state.msgs;
                 message.users = null;
                 msgs.push(message);
                 this.setState({ msgs: msgs });
             }
+
+            console.log(this.state.users);
         };
 
         this.ws.onclose = () => {
