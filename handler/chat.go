@@ -1,11 +1,8 @@
 package handler
 
 import (
-	"crypto/sha256"
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -19,10 +16,9 @@ type myConn struct {
 }
 
 type message struct {
-	Owner    string   `json:"owner"`
-	Data     string   `json:"data"`
-	Users    []string `json:"users"`
-	ByServer bool     `json:"byServer"`
+	Token          string `json:"token"`
+	Message        string `json:"message"`
+	UsersConnected string `json:"usersConnected"`
 }
 
 var upgrader = websocket.Upgrader{}
@@ -30,8 +26,10 @@ var upgrader = websocket.Upgrader{}
 var rooms = make(map[string]map[string]myConn)
 
 func Chat(c *gin.Context) {
-	var owner, idRoom string
-	var ocult bool
+	var owner string
+	var idRoom, myID string
+	var myToken string
+	// var ocult bool
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
@@ -42,18 +40,22 @@ func Chat(c *gin.Context) {
 	}
 	defer conn.Close()
 
-	myID := uuid.NewString()
+	myID = uuid.NewString()
 
 	go ping(conn)
 
 	for {
-		ocult = false
+		// ocult = false
 		msg, err := receiveMessage(conn)
 		if err != nil {
+			if idRoom == "" {
+				return
+			}
+
 			delete(rooms[idRoom], myID)
 
-			users := getUsers(rooms[idRoom])
-			m := message{Owner: owner, Data: "has gone out to the chat", Users: users, ByServer: true}
+			users := getUsersIntoRoom(rooms[idRoom])
+			m := message{Token: myToken, ""}
 
 			data, err := json.Marshal(m)
 			if err != nil {
@@ -66,7 +68,7 @@ func Chat(c *gin.Context) {
 			return
 		}
 
-		if msg.ByServer && msg.Data == "has gone out to the chat" {
+		/* if msg.ByServer && msg.Data == "has gone out to the chat" {
 			delete(rooms[idRoom], myID)
 			return
 		}
@@ -83,7 +85,7 @@ func Chat(c *gin.Context) {
 			} else {
 				rooms[idRoom][myID] = myConn{Conn: conn, Owner: msg.Owner}
 			}
-			ocult = true
+			// ocult = true
 		}
 
 		users := getUsers(rooms[idRoom])
@@ -98,11 +100,11 @@ func Chat(c *gin.Context) {
 			return
 		}
 
-		if !ocult {
-			for i := range rooms[idRoom] {
-				go sendMessage(rooms[idRoom][i].Conn, data)
-			}
+		// if !ocult {
+		for i := range rooms[idRoom] {
+			go sendMessage(rooms[idRoom][i].Conn, data)
 		}
+		// } */
 
 	}
 }
@@ -123,9 +125,9 @@ func sendMessage(conn *websocket.Conn, data []byte) (err error) {
 	return
 }
 
-func getUsers(m map[string]myConn) (users []string) {
-	for k := range m {
-		users = append(users, m[k].Owner)
+func getUsersIntoRoom(room map[string]myConn) (users []string) {
+	for k := range room {
+		users = append(users, room[k].Owner)
 	}
 	return
 }

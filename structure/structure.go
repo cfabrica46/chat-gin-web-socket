@@ -1,6 +1,6 @@
 package structure
 
-type LoginStruct struct {
+type TokenStruct struct {
 	Username string `json:"username"`
 	IDRoom   string `json:"idRoom"`
 }

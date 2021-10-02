@@ -29,7 +29,7 @@ func main() {
 		s.GET("/chat", handler.Chat)
 		s.GET("/host", handler.GetHost)
 	}
-	// r.RunTLS(":"+os.Getenv("PORT"), "server.crt", "server.key")
+	// r.RunTLS(":"+os.Getenv("PORT"), "./keys/server.crt", "./keys/server.key")
 	err = r.Run(":" + os.Getenv("PORT"))
 	if err != nil {
 		log.Println(err)
