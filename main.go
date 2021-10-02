@@ -25,9 +25,13 @@ func main() {
 	r.Use(static.Serve("/", static.LocalFile("./files", false)))
 	s := r.Group("/api/v1")
 	{
+		s.POST("/login", handler.Login)
 		s.GET("/chat", handler.Chat)
 		s.GET("/host", handler.GetHost)
 	}
 	// r.RunTLS(":"+os.Getenv("PORT"), "server.crt", "server.key")
-	r.Run(":" + os.Getenv("PORT"))
+	err = r.Run(":" + os.Getenv("PORT"))
+	if err != nil {
+		log.Println(err)
+	}
 }
