@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/cfabrica46/chat-gin-web-socket/structure"
@@ -14,7 +13,7 @@ func Login(c *gin.Context) {
 	var tokenStructure structure.TokenStruct
 
 	err := c.BindJSON(&tokenStructure)
-	if err == nil {
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"ErrMessage": "Internal Error",
 		})
@@ -23,7 +22,9 @@ func Login(c *gin.Context) {
 
 	tokenString, err := token.GenerateToken(tokenStructure.Username, tokenStructure.IDRoom)
 	if err != nil {
-		log.Fatal(err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"ErrMessage": "Internal Error",
+		})
 	}
 
 	c.JSON(http.StatusOK, gin.H{

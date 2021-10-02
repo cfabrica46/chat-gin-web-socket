@@ -3,17 +3,10 @@ import ReactDOM from "react-dom";
 import { Chat } from "./chat";
 
 class Form extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            username: "",
-            idRoom: "",
-        };
-
-        this.handleChangeUsername = this.handleChangeUsername.bind(this);
-        this.handleChangeRoom = this.handleChangeRoom.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
+    state = {
+        username: "",
+        idRoom: "",
+    };
 
     componentDidMount() {
         fetch("/api/v1/host", {
@@ -30,22 +23,39 @@ class Form extends React.Component {
             });
     }
 
-    handleChangeUsername(event) {
+    handleChangeUsername = (event) => {
         this.setState({ username: event.target.value });
-    }
+    };
 
-    handleChangeRoom(event) {
+    handleChangeRoom = (event) => {
         this.setState({ idRoom: event.target.value });
-    }
+    };
 
-    handleSubmit(event) {
+    handleSubmit = (event) => {
         event.preventDefault();
 
-        ReactDOM.render(
-            <Chat username={this.state.username} idRoom={this.state.idRoom} />,
-            document.getElementById("root")
-        );
-    }
+        fetch("/api/v1/login", {
+            method: "POST",
+            body: JSON.stringify({
+                username: this.state.username,
+                idRoom: this.state.idRoom,
+            }),
+        })
+            .then((responsive) => {
+                if (responsive.status >= 400) {
+                    throw true;
+                }
+                return responsive.json();
+            })
+            .then((token) => {
+                ReactDOM.render(
+                    <Chat token={token.token} idRoom={this.state.idRoom} />,
+                    document.getElementById("root")
+                );
+            });
+        // .catch(() => {
+        // });
+    };
 
     render() {
         return (

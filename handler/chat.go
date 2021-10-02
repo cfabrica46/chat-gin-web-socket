@@ -76,7 +76,7 @@ func Chat(c *gin.Context) {
 			return
 		}
 
-		if msg.IsStatusMessage && strings.Contains(msg.Message, "idRoom:") && myToken == "" && idRoom == "" {
+		if msg.IsStatusMessage && strings.Contains(msg.Message, "idRoom:") && idRoom == "" {
 			idRoom, myToken, err = asignChatVariables(conn, msg, myID)
 			if err != nil {
 				return
@@ -93,6 +93,8 @@ func Chat(c *gin.Context) {
 
 		msg.UsersConnected = users
 
+		fmt.Println(msg)
+
 		dataJSON, err := json.Marshal(msg)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
@@ -101,9 +103,13 @@ func Chat(c *gin.Context) {
 			return
 		}
 
+		fmt.Println(rooms)
+
+		fmt.Println()
 		// if !ocult {
 		for i := range rooms[idRoom] {
-			go sendMessage(rooms[idRoom][i].Conn, dataJSON)
+			fmt.Println(i)
+			sendMessage(rooms[idRoom][i].Conn, dataJSON)
 		}
 		// }
 

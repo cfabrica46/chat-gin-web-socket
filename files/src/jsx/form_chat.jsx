@@ -1,12 +1,12 @@
 import React from "react";
 
 class Message {
-    constructor(owner, data, users, byServer, classMessage) {
-        this.owner = owner;
-        this.data = data;
-        this.users = users;
-        this.byServer = byServer;
-        this.className = classMessage;
+    constructor(token, message, usersConnected, isStatusMessage, classMessage) {
+        this.token = token;
+        this.message = message;
+        this.usersConnected = usersConnected;
+        this.isStatusMessage = isStatusMessage;
+        this.classMessage = classMessage;
     }
 }
 
@@ -41,8 +41,8 @@ function DisplayMessages(props) {
             {props.messages.map((message) => (
                 <h3 className={`chat-msg ${message.classMessage}`}>
                     {message.byServer
-                        ? `${message.owner} ${message.data}`
-                        : `${message.owner}: ${message.data}`}
+                        ? `cesar ${message.message}`
+                        : `cesar: ${message.message}`}
                 </h3>
             ))}
         </div>
@@ -50,67 +50,57 @@ function DisplayMessages(props) {
 }
 
 class FormChat extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            value: "",
-            msgs: [],
-            users: [],
-            showUsers: false,
-        };
-
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleShowUsers = this.handleShowUsers.bind(this);
-        this.handleOcultUsers = this.handleOcultUsers.bind(this);
-    }
+    state = {
+        value: "",
+        msgs: [],
+        users: [],
+        showUsers: false,
+    };
 
     ws = new WebSocket(`${localStorage.getItem("host")}/api/v1/chat`);
 
-    handleChange(event) {
+    handleChange = (event) => {
         this.setState({ value: event.target.value });
-    }
+    };
 
-    handleShowUsers() {
+    handleShowUsers = () => {
         this.setState({ showUsers: true });
-    }
+    };
 
-    handleOcultUsers() {
+    handleOcultUsers = () => {
         this.setState({ showUsers: false });
-    }
+    };
 
     componentDidMount() {
         this.ws.onopen = () => {
             let message = new Message(
-                this.props.owner,
+                this.props.token,
                 `idRoom:${this.props.idRoom}`,
-                null,
+                [],
                 true
             );
             this.ws.send(JSON.stringify(message));
-            this.setState({ value: "" });
 
             message = new Message(
-                this.props.owner,
+                this.props.token,
                 "has joined the chat",
-                null,
+                [],
                 true
             );
             this.ws.send(JSON.stringify(message));
-            this.setState({ value: "" });
         };
 
         this.ws.onmessage = (m) => {
             let ping = false;
             let message = JSON.parse(m.data);
 
-            if (message.byServer) {
+            if (message.isStatusMessage) {
                 message.classMessage = "chat-msg--system";
-                if (message.data === "ping") {
+                if (message.message === "ping") {
                     ping = true;
                 }
             } else {
-                if (message.owner === this.props.owner) {
+                if (message.token === this.props.token) {
                     message.classMessage = "chat-msg--user";
                 } else {
                     message.classMessage = "chat-msg--other";
@@ -119,7 +109,6 @@ class FormChat extends React.Component {
 
             if (!ping) {
                 this.setState({ users: message.users });
-
                 let msgs = this.state.msgs;
                 message.users = null;
                 msgs.push(message);
@@ -129,9 +118,9 @@ class FormChat extends React.Component {
 
         this.ws.onclose = () => {
             let message = new Message(
-                this.props.owner,
+                this.props.token,
                 "has gone out to the chat",
-                null,
+                [],
                 true
             );
 
@@ -144,18 +133,18 @@ class FormChat extends React.Component {
         };
     }
 
-    handleSubmit(event) {
+    handleSubmit = (event) => {
         event.preventDefault();
 
         let message = new Message(
-            this.props.owner,
+            this.props.token,
             this.state.value,
-            null,
+            [],
             false
         );
         this.ws.send(JSON.stringify(message));
         this.setState({ value: "" });
-    }
+    };
 
     render() {
         return (
