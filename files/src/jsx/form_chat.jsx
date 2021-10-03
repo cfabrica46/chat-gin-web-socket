@@ -123,7 +123,7 @@ class FormChat extends React.Component {
                 this.setState({ msgs: msgs });
             }
 
-            console.log(this.state.users);
+            console.log(message);
         };
 
         this.ws.onclose = () => {

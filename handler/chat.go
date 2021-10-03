@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/cfabrica46/chat-gin-web-socket/token"
@@ -17,6 +18,7 @@ import (
 type myConn struct {
 	Conn  *websocket.Conn
 	Owner string
+	mu    sync.Mutex
 }
 
 type message struct {
@@ -47,11 +49,13 @@ func Chat(c *gin.Context) {
 
 	myID = uuid.NewString()
 
-	go ping(conn)
+	mc := myConn{Conn: conn, mu: sync.Mutex{}}
+
+	go ping(&mc)
 
 	for {
 		ocult = false
-		msg, err := receiveMessage(conn)
+		msg, err := receiveMessage(&mc)
 		if err != nil {
 			if idRoom == "" {
 				return
@@ -68,7 +72,8 @@ func Chat(c *gin.Context) {
 			}
 
 			for i := range rooms[idRoom] {
-				sendMessage(rooms[idRoom][i].Conn, msgJSON)
+				mc := rooms[idRoom][i]
+				sendMessage(&mc, msgJSON)
 			}
 			return
 		}
@@ -78,7 +83,7 @@ func Chat(c *gin.Context) {
 		}
 
 		if msg.IsStatusMessage && strings.Contains(msg.Message, "idRoom:") && idRoom == "" {
-			idRoom, myToken, owner, err = asignChatVariables(conn, msg, myID)
+			idRoom, myToken, owner, err = asignChatVariables(&mc, msg, myID)
 			if err != nil {
 				return
 			}
@@ -103,25 +108,30 @@ func Chat(c *gin.Context) {
 			return
 		}
 
+		fmt.Printf("%s\n", dataJSON)
+
 		if !ocult {
 			for i := range rooms[idRoom] {
-				go sendMessage(rooms[idRoom][i].Conn, dataJSON)
+				mc := rooms[idRoom][i]
+				sendMessage(&mc, dataJSON)
 			}
 		}
 
 	}
 }
 
-func receiveMessage(conn *websocket.Conn) (newMessage message, err error) {
-	err = conn.ReadJSON(&newMessage)
+func receiveMessage(mc *myConn) (newMessage message, err error) {
+	err = mc.Conn.ReadJSON(&newMessage)
 	if err != nil {
 		return
 	}
 	return
 }
 
-func sendMessage(conn *websocket.Conn, data []byte) (err error) {
-	err = conn.WriteMessage(1, data)
+func sendMessage(mc *myConn, data []byte) (err error) {
+	mc.mu.Lock()
+	defer mc.mu.Unlock()
+	err = mc.Conn.WriteMessage(1, data)
 	if err != nil {
 		return
 	}
@@ -135,7 +145,7 @@ func getUsersIntoRoom(room map[string]myConn) (users []string) {
 	return
 }
 
-func asignChatVariables(conn *websocket.Conn, msg message, myID string) (idRoom, myToken, owner string, err error) {
+func asignChatVariables(mc *myConn, msg message, myID string) (idRoom, myToken, owner string, err error) {
 	hash := sha256.Sum256([]byte(msg.Message))
 	idRoom = fmt.Sprintf("%x\n", hash)
 
@@ -147,18 +157,19 @@ func asignChatVariables(conn *websocket.Conn, msg message, myID string) (idRoom,
 	}
 
 	owner = tokenStructure.Username
+	mc.Owner = owner
 
 	if len(rooms[idRoom]) == 0 {
 		rooms[idRoom] = make(map[string]myConn)
-		rooms[idRoom][myID] = myConn{Conn: conn, Owner: tokenStructure.Username}
+		rooms[idRoom][myID] = *mc
 	} else {
-		rooms[idRoom][myID] = myConn{Conn: conn, Owner: tokenStructure.Username}
+		rooms[idRoom][myID] = *mc
 	}
 
 	return
 }
 
-func ping(conn *websocket.Conn) {
+func ping(mc *myConn) {
 	var msg = message{Message: "ping", IsStatusMessage: true}
 	dataJSON, err := json.Marshal(msg)
 	if err != nil {
@@ -166,10 +177,12 @@ func ping(conn *websocket.Conn) {
 	}
 
 	for {
-		time.Sleep(time.Second * 2)
-		err = sendMessage(conn, dataJSON)
+		time.Sleep(time.Second * 30)
+		mc.mu.Lock()
+		err = sendMessage(mc, dataJSON)
 		if err != nil {
 			return
 		}
+		mc.mu.Unlock()
 	}
 }
