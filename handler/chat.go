@@ -111,7 +111,7 @@ func Chat(c *gin.Context) {
 		if !ocult {
 			for i := range rooms[idRoom] {
 				mc := rooms[idRoom][i]
-				sendMessage(&mc, dataJSON)
+				go sendMessage(&mc, dataJSON)
 			}
 		}
 
