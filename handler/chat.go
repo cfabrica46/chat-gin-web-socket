@@ -1,11 +1,8 @@
 package handler
 
 import (
-	"crypto/sha256"
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 
@@ -22,12 +19,15 @@ type myConn struct {
 }
 
 type message struct {
-	Token           string   `json:"token"`
-	Message         string   `json:"message"`
-	UsersConnected  []string `json:"usersConnected"`
-	IsStatusMessage bool     `json:"isStatusMessage"`
-	Owner           string   `json:"owner"`
+	Token           string `json:"token"`
+	Message         string `json:"message"`
+	IsStatusMessage bool   `json:"isStatusMessage"`
 }
+
+const (
+	messageConnect    = "has joined the chat"
+	messageDisconnect = "has gone out to the chat"
+)
 
 var upgrader = websocket.Upgrader{}
 
@@ -63,15 +63,12 @@ func Chat(c *gin.Context) {
 
 			delete(rooms[idRoom], myID)
 
-			users := getUsersIntoRoom(rooms[idRoom])
-			m := message{Token: myToken, Message: "has gone out to the chat", UsersConnected: users, IsStatusMessage: true, Owner: owner}
+			// users := getUsersIntoRoom(rooms[idRoom])
+			m := message{Token: myToken, Message: messageDisconnect, IsStatusMessage: true}
 
-			msgJSON, err := json.Marshal(m)
-			if err == nil {
-				for i := range rooms[idRoom] {
-					mc := rooms[idRoom][i]
-					sendMessage(&mc, msgJSON)
-				}
+			for i := range rooms[idRoom] {
+				mc := rooms[idRoom][i]
+				sendMessage(&mc, owner, m)
 			}
 		}
 
@@ -79,7 +76,7 @@ func Chat(c *gin.Context) {
 			return
 		}
 
-		if msg.IsStatusMessage && strings.Contains(msg.Message, "idRoom:") && idRoom == "" {
+		if msg.IsStatusMessage && msg.Message == messageConnect {
 			idRoom, myToken, owner, err = asignChatVariables(&mc, msg, myID)
 			if err != nil {
 				return
@@ -87,23 +84,15 @@ func Chat(c *gin.Context) {
 			ocult = true
 		}
 
-		if msg.IsStatusMessage && msg.Message == "has gone out to the chat" && myToken == msg.Token {
-			delete(rooms[idRoom], myID)
-			return
-		}
+		// users := getUsersIntoRoom(rooms[idRoom])
 
-		users := getUsersIntoRoom(rooms[idRoom])
+		// msg.UsersConnected = users
+		// msg.Owner = owner
 
-		msg.UsersConnected = users
-		msg.Owner = owner
-
-		dataJSON, err := json.Marshal(msg)
-		if err == nil {
-			if !ocult {
-				for i := range rooms[idRoom] {
-					mc := rooms[idRoom][i]
-					go sendMessage(&mc, dataJSON)
-				}
+		if !ocult {
+			for i := range rooms[idRoom] {
+				mc := rooms[idRoom][i]
+				go sendMessage(&mc, owner, msg)
 			}
 		}
 
@@ -118,10 +107,19 @@ func receiveMessage(mc *myConn) (newMessage message, err error) {
 	return
 }
 
-func sendMessage(mc *myConn, data []byte) (err error) {
+func sendMessage(mc *myConn, owner string, msg message) (err error) {
 	mc.mu.Lock()
 	defer mc.mu.Unlock()
-	err = mc.Conn.WriteMessage(1, data)
+
+	var myMsg = struct {
+		owner string
+		msg   message
+	}{
+		owner,
+		msg,
+	}
+
+	err = mc.Conn.WriteJSON(myMsg)
 	if err != nil {
 		return
 	}
@@ -136,9 +134,6 @@ func getUsersIntoRoom(room map[string]myConn) (users []string) {
 }
 
 func asignChatVariables(mc *myConn, msg message, myID string) (idRoom, myToken, owner string, err error) {
-	hash := sha256.Sum256([]byte(msg.Message))
-	idRoom = fmt.Sprintf("%x\n", hash)
-
 	myToken = msg.Token
 
 	tokenStructure, err := token.ExtractTokenStructFromClaims(myToken)
@@ -147,6 +142,7 @@ func asignChatVariables(mc *myConn, msg message, myID string) (idRoom, myToken, 
 	}
 
 	owner = tokenStructure.Username
+	idRoom = tokenStructure.IDRoom
 	mc.Owner = owner
 
 	if len(rooms[idRoom]) == 0 {
