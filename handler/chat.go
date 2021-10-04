@@ -67,15 +67,12 @@ func Chat(c *gin.Context) {
 			m := message{Token: myToken, Message: "has gone out to the chat", UsersConnected: users, IsStatusMessage: true, Owner: owner}
 
 			msgJSON, err := json.Marshal(m)
-			if err != nil {
-				msgJSON = []byte{}
+			if err == nil {
+				for i := range rooms[idRoom] {
+					mc := rooms[idRoom][i]
+					sendMessage(&mc, msgJSON)
+				}
 			}
-
-			for i := range rooms[idRoom] {
-				mc := rooms[idRoom][i]
-				sendMessage(&mc, msgJSON)
-			}
-			return
 		}
 
 		if msg.Token == "" {
@@ -101,17 +98,12 @@ func Chat(c *gin.Context) {
 		msg.Owner = owner
 
 		dataJSON, err := json.Marshal(msg)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"ErrMessage": "Internal Error",
-			})
-			return
-		}
-
-		if !ocult {
-			for i := range rooms[idRoom] {
-				mc := rooms[idRoom][i]
-				go sendMessage(&mc, dataJSON)
+		if err == nil {
+			if !ocult {
+				for i := range rooms[idRoom] {
+					mc := rooms[idRoom][i]
+					go sendMessage(&mc, dataJSON)
+				}
 			}
 		}
 
