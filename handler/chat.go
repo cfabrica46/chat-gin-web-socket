@@ -18,7 +18,7 @@ import (
 type myConn struct {
 	Conn  *websocket.Conn
 	Owner string
-	mu    sync.Mutex
+	mu    *sync.Mutex
 }
 
 type message struct {
@@ -49,7 +49,7 @@ func Chat(c *gin.Context) {
 
 	myID = uuid.NewString()
 
-	mc := myConn{Conn: conn, mu: sync.Mutex{}}
+	mc := myConn{Conn: conn, mu: &sync.Mutex{}}
 
 	go ping(&mc)
 
@@ -107,8 +107,6 @@ func Chat(c *gin.Context) {
 			})
 			return
 		}
-
-		fmt.Printf("%s\n", dataJSON)
 
 		if !ocult {
 			for i := range rooms[idRoom] {
