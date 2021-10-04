@@ -89,6 +89,8 @@ func Chat(c *gin.Context) {
 		// msg.UsersConnected = users
 		// msg.Owner = owner
 
+		msg.Token = ""
+
 		if !ocult {
 			for i := range rooms[idRoom] {
 				mc := rooms[idRoom][i]
