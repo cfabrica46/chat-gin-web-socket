@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"sync"
 	"time"
@@ -109,7 +110,7 @@ func receiveMessage(mc *myConn) (newMessage message, err error) {
 	return
 }
 
-func sendMessage(mc *myConn, owner string, msg message) (err error) {
+func sendMessage(mc *myConn, owner string, msg message) {
 	mc.mu.Lock()
 	defer mc.mu.Unlock()
 
@@ -123,11 +124,10 @@ func sendMessage(mc *myConn, owner string, msg message) (err error) {
 		msg,
 	}
 
-	err = mc.Conn.WriteJSON(myMsg)
+	err := mc.Conn.WriteJSON(myMsg)
 	if err != nil {
-		return
+		log.Println(err)
 	}
-	return
 }
 
 func getUsersIntoRoom(room map[string]myConn) (users []string) {
@@ -166,10 +166,7 @@ func ping(mc *myConn) {
 		time.Sleep(time.Second * 5)
 		mc.mu.Lock()
 		fmt.Println(msg)
-		err := sendMessage(mc, "", msg)
-		if err != nil {
-			return
-		}
+		sendMessage(mc, "", msg)
 		mc.mu.Unlock()
 	}
 }
