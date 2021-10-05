@@ -80,7 +80,6 @@ class Form extends React.Component {
                     ID Room
                 </label>
                 <input
-                    autoFocus
                     name="room"
                     className="form--input-text"
                     type="text"

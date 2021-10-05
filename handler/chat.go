@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -59,11 +60,15 @@ func Chat(c *gin.Context) {
 		return
 	}
 
+	mc.Owner = owner
+
 	go sendWelcomeMessage(mc, idRoom)
 
 	for i := range rooms[idRoom] {
 		if rooms[idRoom][i] != mc {
 			go sendMessage(rooms[idRoom][i], owner, true, message{Body: messageConnect})
+			fmt.Println(rooms[idRoom][i].Owner)
+			fmt.Println(1)
 		}
 	}
 
