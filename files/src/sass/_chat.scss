@@ -6,6 +6,7 @@
 
     .title--login {
         $text: "welcome to chat";
+        font-style: Roboto;
         &:after {
             content: $text;
         }
@@ -28,7 +29,7 @@
         margin: 0;
         position: absolute;
         $stroke-width: 35px * 0.2;
-        font-family: "Pacifico", cursive;
+        // font-family: "Pacifico", cursive;
         text-transform: uppercase;
         font-size: 40px;
         color: white;
@@ -67,11 +68,11 @@
     }
 
     .form-login {
-        top: 55%;
+        top: 50%;
         transform: translate(-50%, -50%);
-        width: 350px;
-        height: 210px;
-        padding: 30px 40px;
+        width: 400px;
+        height: 270px;
+        padding: 20px 40px;
 
         .label {
             display: block;
@@ -79,15 +80,18 @@
             font-family: Courier;
             font-weight: bold;
             color: $darkColor;
+            font-size: 20px;
         }
 
         .form--input-text {
+            padding: 10px;
             display: block;
             width: 100%;
             border: 1px solid $deathColor;
             transition: ease 0.3s, border 0.3s;
             color: $darkColor;
             margin-bottom: 15px;
+            font-size: 1.2em;
 
             &:focus {
                 border: 1px solid $secundaryColor;
