@@ -8,7 +8,9 @@ class Chat extends React.Component {
             <div>
                 <Background />
                 <main className="main">
-                    <p className="title title--chat">Connected</p>
+                    <p className="title title--chat">
+                        ID Room: {this.props.idRoom}
+                    </p>
                     <FormChat
                         token={this.props.token}
                         idRoom={this.props.idRoom}

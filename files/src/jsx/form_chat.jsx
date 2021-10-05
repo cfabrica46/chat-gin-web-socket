@@ -11,8 +11,7 @@ function DisplayNumberUsers(props) {
     return (
         <div onClick={() => props.onClickShow()} className="chat-number-users">
             <p className="chat-number-users-text">
-                ID Room: {props.idRoom} | Users Connected:{" "}
-                {props.elements.length}
+                Users Connected: {props.elements.length}
             </p>
         </div>
     );
