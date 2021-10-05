@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
 	"sync"
 	"time"
@@ -20,7 +19,7 @@ type myConn struct {
 
 type message struct {
 	Token           string `json:"token"`
-	Message         string `json:"message"`
+	Body            string `json:"body"`
 	IsStatusMessage bool   `json:"isStatusMessage"`
 }
 
@@ -64,7 +63,7 @@ func Chat(c *gin.Context) {
 			delete(rooms[idRoom], myID)
 
 			// users := getUsersIntoRoom(rooms[idRoom])
-			m := message{Token: myToken, Message: messageDisconnect, IsStatusMessage: true}
+			m := message{Token: myToken, Body: messageDisconnect, IsStatusMessage: true}
 
 			for i := range rooms[idRoom] {
 				mc := rooms[idRoom][i]
@@ -76,7 +75,7 @@ func Chat(c *gin.Context) {
 			return
 		}
 
-		if msg.IsStatusMessage && msg.Message == messageConnect {
+		if msg.IsStatusMessage && msg.Body == messageConnect {
 			idRoom, myToken, owner, err = asignChatVariables(&mc, msg, myID)
 			if err != nil {
 				return
@@ -158,16 +157,12 @@ func asignChatVariables(mc *myConn, msg message, myID string) (idRoom, myToken, 
 }
 
 func ping(mc *myConn) {
-	var msg = message{Message: "ping", IsStatusMessage: true}
-	dataJSON, err := json.Marshal(msg)
-	if err != nil {
-		return
-	}
+	var msg = message{Body: "ping", IsStatusMessage: true}
 
 	for {
 		time.Sleep(time.Second * 30)
 		mc.mu.Lock()
-		err = sendMessage(mc, dataJSON)
+		err := sendMessage(mc, "", msg)
 		if err != nil {
 			return
 		}

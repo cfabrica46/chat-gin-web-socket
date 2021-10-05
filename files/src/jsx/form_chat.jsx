@@ -1,20 +1,10 @@
 import React from "react";
 
 class Message {
-    constructor(
-        token,
-        message,
-        usersConnected,
-        isStatusMessage,
-        classMessage,
-        owner
-    ) {
+    constructor(token, message, isStatusMessage) {
         this.token = token;
         this.message = message;
-        this.usersConnected = usersConnected;
         this.isStatusMessage = isStatusMessage;
-        this.classMessage = classMessage;
-        this.owner = owner;
     }
 }
 
