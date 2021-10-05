@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"sync"
 	"time"
@@ -80,7 +81,6 @@ func Chat(c *gin.Context) {
 			if err != nil {
 				return
 			}
-			ocult = true
 		}
 
 		// users := getUsersIntoRoom(rooms[idRoom])
@@ -88,7 +88,8 @@ func Chat(c *gin.Context) {
 		// msg.UsersConnected = users
 		// msg.Owner = owner
 
-		msg.Token = ""
+		fmt.Println(rooms)
+		fmt.Println()
 
 		if !ocult {
 			for i := range rooms[idRoom] {
@@ -112,9 +113,11 @@ func sendMessage(mc *myConn, owner string, msg message) (err error) {
 	mc.mu.Lock()
 	defer mc.mu.Unlock()
 
+	msg.Token = ""
+
 	var myMsg = struct {
-		owner string
-		msg   message
+		Owner string  `json:"owner"`
+		Msg   message `json:"msg"`
 	}{
 		owner,
 		msg,
@@ -160,8 +163,9 @@ func ping(mc *myConn) {
 	var msg = message{Body: "ping", IsStatusMessage: true}
 
 	for {
-		time.Sleep(time.Second * 30)
+		time.Sleep(time.Second * 5)
 		mc.mu.Lock()
+		fmt.Println(msg)
 		err := sendMessage(mc, "", msg)
 		if err != nil {
 			return

@@ -12,6 +12,7 @@ class Chat extends React.Component {
                     <FormChat
                         token={this.props.token}
                         idRoom={this.props.idRoom}
+                        owner={this.props.owner}
                     />
                 </main>
             </div>

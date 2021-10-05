@@ -49,7 +49,11 @@ class Form extends React.Component {
             })
             .then((token) => {
                 ReactDOM.render(
-                    <Chat token={token.token} idRoom={this.state.idRoom} />,
+                    <Chat
+                        token={token.token}
+                        idRoom={this.state.idRoom}
+                        owner={this.state.username}
+                    />,
                     document.getElementById("root")
                 );
             });
