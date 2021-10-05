@@ -82,7 +82,8 @@ body {
 
     .chat {
         width: 100vw;
-        height: 100vh;
+        height: -webkit-fill-available;
+        // height: 100vh;
         .form-message {
             top: 50%;
             height: 100%;
