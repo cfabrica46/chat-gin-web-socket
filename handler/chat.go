@@ -39,7 +39,7 @@ var rooms = make(map[string]map[string]myConn)
 
 func Chat(c *gin.Context) {
 	var idRoom, myID string
-	var myToken, owner string
+	var owner string
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
@@ -54,35 +54,36 @@ func Chat(c *gin.Context) {
 
 	mc := myConn{Conn: conn, mu: &sync.Mutex{}}
 
-	msg, err := receiveMessage(&mc)
+	msg, err := receiveMessage(mc)
 	if err != nil {
 		return
 	}
 
-	idRoom, myToken, owner, err = asignChatVariables(&mc, msg, myID)
+	idRoom, _, owner, err = asignChatVariables(mc, msg, myID)
 	if err != nil {
 		return
 	}
+
+	go sendWelcomeMessage(mc, idRoom)
 
 	for i := range rooms[idRoom] {
-		mc := rooms[idRoom][i]
-		msg.Body = messageConnect
-		go sendWelcomeMessage(&mc, owner, idRoom, true, msg)
+		go sendMessage(rooms[idRoom][i], owner, true, message{Body: messageConnect})
 	}
 
-	go ping(&mc)
+	go ping(mc)
 
 	for {
-		msg, err := receiveMessage(&mc)
+		msg, err := receiveMessage(mc)
 		if err != nil {
 			delete(rooms[idRoom], myID)
 
-			m := message{Token: myToken, Body: messageDisconnect}
+			m := message{Body: messageDisconnect}
 
 			for i := range rooms[idRoom] {
 				mc := rooms[idRoom][i]
-				go sendMessage(&mc, owner, true, m)
+				go sendMessage(mc, owner, true, m)
 			}
+			return
 		}
 
 		if msg.Token == "" {
@@ -91,13 +92,13 @@ func Chat(c *gin.Context) {
 
 		for i := range rooms[idRoom] {
 			mc := rooms[idRoom][i]
-			go sendMessage(&mc, owner, false, msg)
+			go sendMessage(mc, owner, false, msg)
 		}
 
 	}
 }
 
-func receiveMessage(mc *myConn) (newMessage message, err error) {
+func receiveMessage(mc myConn) (newMessage message, err error) {
 	err = mc.Conn.ReadJSON(&newMessage)
 	if err != nil {
 		return
@@ -105,7 +106,7 @@ func receiveMessage(mc *myConn) (newMessage message, err error) {
 	return
 }
 
-func sendMessage(mc *myConn, owner string, isStatusMessage bool, msg message) (err error) {
+func sendMessage(mc myConn, owner string, isStatusMessage bool, msg message) (err error) {
 	mc.mu.Lock()
 	defer mc.mu.Unlock()
 
@@ -129,23 +130,17 @@ func sendMessage(mc *myConn, owner string, isStatusMessage bool, msg message) (e
 	return
 }
 
-func sendWelcomeMessage(mc *myConn, owner, idRoom string, isStatusMessage bool, msg message) (err error) {
+func sendWelcomeMessage(mc myConn, idRoom string) (err error) {
 	mc.mu.Lock()
 	defer mc.mu.Unlock()
-
-	msg.Token = ""
 
 	usersConnected := getUsersIntoRoom(rooms[idRoom])
 
 	var myMsg = struct {
-		Owner           string   `json:"owner"`
 		IsStatusMessage bool     `json:"isStatusMessage"`
-		Msg             message  `json:"msg"`
 		UsersConnected  []string `json:"usersConnected"`
 	}{
-		owner,
-		isStatusMessage,
-		msg,
+		true,
 		usersConnected,
 	}
 
@@ -157,7 +152,7 @@ func sendWelcomeMessage(mc *myConn, owner, idRoom string, isStatusMessage bool, 
 	return
 }
 
-func asignChatVariables(mc *myConn, msg message, myID string) (idRoom, myToken, owner string, err error) {
+func asignChatVariables(mc myConn, msg message, myID string) (idRoom, myToken, owner string, err error) {
 	myToken = msg.Token
 
 	tokenStructure, err := token.ExtractTokenStructFromClaims(myToken)
@@ -171,15 +166,15 @@ func asignChatVariables(mc *myConn, msg message, myID string) (idRoom, myToken, 
 
 	if len(rooms[idRoom]) == 0 {
 		rooms[idRoom] = make(map[string]myConn)
-		rooms[idRoom][myID] = *mc
+		rooms[idRoom][myID] = mc
 	} else {
-		rooms[idRoom][myID] = *mc
+		rooms[idRoom][myID] = mc
 	}
 
 	return
 }
 
-func ping(mc *myConn) {
+func ping(mc myConn) {
 	var msg = message{Body: "ping"}
 
 	for {
