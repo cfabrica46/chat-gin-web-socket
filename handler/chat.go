@@ -108,7 +108,7 @@ func sendMessage(mc *myConn, owner string, isStatusMessage bool, msg message) (e
 
 	var myMsg = struct {
 		Owner           string  `json:"owner"`
-		isStatusMessage bool    `json:"isStatusMessage"`
+		IsStatusMessage bool    `json:"isStatusMessage"`
 		Msg             message `json:"msg"`
 	}{
 		owner,
@@ -153,7 +153,7 @@ func ping(mc *myConn) {
 		time.Sleep(time.Second * 5)
 		err := sendMessage(mc, "", true, msg)
 		if err != nil {
-			log.Println(err)
+			return
 		}
 	}
 }

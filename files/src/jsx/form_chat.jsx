@@ -1,10 +1,9 @@
 import React from "react";
 
 class Message {
-    constructor(token, body, isStatusMessage) {
+    constructor(token, body) {
         this.token = token;
         this.body = body;
-        this.isStatusMessage = isStatusMessage;
     }
 }
 
@@ -71,11 +70,7 @@ class FormChat extends React.Component {
 
     componentDidMount() {
         this.ws.onopen = () => {
-            let message = new Message(
-                this.props.token,
-                "has joined the chat",
-                true
-            );
+            let message = new Message(this.props.token, "");
             this.ws.send(JSON.stringify(message));
         };
 
@@ -92,7 +87,7 @@ class FormChat extends React.Component {
                 this.setState({ users: newUsers });
             }
 
-            if (message.msg.isStatusMessage) {
+            if (message.isStatusMessage) {
                 messageClass = "chat-msg--system";
                 if (message.msg.body === "ping") {
                     ping = true;
@@ -109,7 +104,7 @@ class FormChat extends React.Component {
                 owner: message.owner,
                 body: message.msg.body,
                 msgClass: messageClass,
-                isStatusMessage: message.msg.isStatusMessage,
+                isStatusMessage: message.isStatusMessage,
             };
 
             if (!ping) {
@@ -119,28 +114,26 @@ class FormChat extends React.Component {
             }
         };
 
-        this.ws.onclose = () => {
-            let myMsg = {
-                owner: this.props.owner,
-                body: "has gone out to the chat",
-                msgClass: "chat-msg--system",
-                isStatusMessage: true,
-            };
+        // this.ws.onclose = () => {
+        //     let myMsg = {
+        //         owner: this.props.owner,
+        //         body: "has gone out to the chat",
+        //         msgClass: "chat-msg--system",
+        //         isStatusMessage: true,
+        //     };
 
-            console.log("wow");
-
-            let newMsgs = this.state.msgs;
-            newMsgs.push(myMsg);
-            this.setState({ msgs: newMsgs });
-            this.setState({ value: "" });
-            console.log("The connection has been closed successfully.");
-        };
+        //     let newMsgs = this.state.msgs;
+        //     newMsgs.push(myMsg);
+        //     this.setState({ msgs: newMsgs });
+        //     this.setState({ value: "" });
+        //     console.log("The connection has been closed successfully.");
+        // };
     }
 
     handleSubmit = (event) => {
         event.preventDefault();
 
-        let message = new Message(this.props.token, this.state.value, false);
+        let message = new Message(this.props.token, this.state.value);
         this.ws.send(JSON.stringify(message));
         this.setState({ value: "" });
     };
