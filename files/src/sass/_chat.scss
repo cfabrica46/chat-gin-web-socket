@@ -1,60 +1,40 @@
 @import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
 
 .main {
+    position: relative;
     margin: 50px 20px;
     padding: 20px;
 
-    .title--login {
-        $text: "welcome to chat";
-        font-style: Roboto;
-        &:after {
-            content: $text;
-        }
-        &:before {
-            content: $text;
-        }
-    }
-
-    .title--chat {
-        $text: "Connected";
-        &:after {
-            content: $text;
-        }
-        &:before {
-            content: $text;
-        }
-    }
-
     .title {
         margin: 0;
-        position: absolute;
+        // position: absolute;
         $stroke-width: 35px * 0.2;
         // font-family: "Pacifico", cursive;
         text-transform: uppercase;
         font-size: 40px;
-        color: white;
+        color: $darkColor;
         text-align: center;
-        -webkit-text-stroke-width: $stroke-width;
+        // -webkit-text-stroke-width: $stroke-width;
         margin-bottom: 50px;
-        left: 50%;
-        transform: translateX(-50%);
+        // left: 50%;
+        // transform: translateX(-50%);
 
-        &:after {
-            position: absolute;
-            top: 0;
-            left: 0;
-            -webkit-text-stroke-width: 0;
-            color: $secundaryColor;
-        }
+        // &:after {
+        //     position: absolute;
+        //     top: 0;
+        //     left: 0;
+        //     -webkit-text-stroke-width: 0;
+        //     color: $secundaryColor;
+        // }
 
-        &:before {
-            z-index: -1;
-            position: absolute;
-            top: 0;
-            left: 0;
-            -webkit-text-stroke-width: $stroke-width + 15px;
-            -webkit-text-stroke-color: $darkColor;
-        }
+        // &:before {
+        //     z-index: -1;
+        //     position: absolute;
+        //     top: 0;
+        //     left: 0;
+        //     -webkit-text-stroke-width: $stroke-width + 15px;
+        //     -webkit-text-stroke-color: $darkColor;
+        // }
     }
 
     .form {
@@ -68,9 +48,11 @@
     }
 
     .form-login {
-        top: 50%;
-        transform: translate(-50%, -50%);
-        width: 400px;
+        // top: 50%;
+        // transform: translate(-50%, -50%);
+        display: inline-block;
+        // top: 500px;
+        width: 300px;
         height: 270px;
         padding: 20px 40px;
 
@@ -86,7 +68,7 @@
         .form--input-text {
             padding: 10px;
             display: block;
-            width: 100%;
+            width: 190px;
             border: 1px solid $deathColor;
             transition: ease 0.3s, border 0.3s;
             color: $darkColor;
@@ -100,9 +82,12 @@
         }
 
         .form--input-submit {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
             cursor: pointer;
             bottom: 20px;
-            width: 102%;
+            width: 80%;
             height: 35px;
             background-color: $darkColor;
             border: 1px solid $darkColor;
@@ -120,9 +105,9 @@
         .form-message {
             margin-top: 70px;
             top: 50%;
-            transform: translate(-50%, -50%);
-            height: 60%;
-            width: 80%;
+            // transform: translate(-50%, -50%);
+            height: 600px;
+            width: 90%;
             display: flex;
             flex-direction: column;
             justify-content: space-around;

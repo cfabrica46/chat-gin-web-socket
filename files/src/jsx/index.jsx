@@ -10,7 +10,7 @@ class Index extends React.Component {
             <div>
                 <Background />
                 <main className="main">
-                    <p className="title title--login">Welcome to Chat</p>
+                    <p className="title title--login">Welcome To Chat</p>
                     <Form />
                 </main>
             </div>
