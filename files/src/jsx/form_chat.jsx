@@ -74,6 +74,9 @@ class FormChat extends React.Component {
     };
 
     componentDidMount() {
+        let vh = window.innerHeight * 0.01;
+        document.getElementById("chat").style.setProperty("--vh", `${vh}px`);
+
         this.ws.onopen = () => {
             let message = new Message(this.props.token, "");
             this.ws.send(JSON.stringify(message));
@@ -152,7 +155,7 @@ class FormChat extends React.Component {
 
     render() {
         return (
-            <div className="chat">
+            <div className="chat" id="chat">
                 <form
                     className="form form-message"
                     onSubmit={this.handleSubmit}
