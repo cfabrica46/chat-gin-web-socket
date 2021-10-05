@@ -18,6 +18,11 @@ type myConn struct {
 	mu    *sync.Mutex
 }
 
+type welcomeMessage struct {
+	Token          string   `json:"token"`
+	UsersConnected []string `json:"usersConnected"`
+}
+
 type message struct {
 	Token string `json:"token"`
 	Body  string `json:"body"`
@@ -62,7 +67,7 @@ func Chat(c *gin.Context) {
 	for i := range rooms[idRoom] {
 		mc := rooms[idRoom][i]
 		msg.Body = messageConnect
-		go sendMessage(&mc, owner, true, msg)
+		go sendWelcomeMessage(&mc, owner, idRoom, true, msg)
 	}
 
 	go ping(&mc)
@@ -124,6 +129,34 @@ func sendMessage(mc *myConn, owner string, isStatusMessage bool, msg message) (e
 	return
 }
 
+func sendWelcomeMessage(mc *myConn, owner, idRoom string, isStatusMessage bool, msg message) (err error) {
+	mc.mu.Lock()
+	defer mc.mu.Unlock()
+
+	msg.Token = ""
+
+	usersConnected := getUsersIntoRoom(rooms[idRoom])
+
+	var myMsg = struct {
+		Owner           string   `json:"owner"`
+		IsStatusMessage bool     `json:"isStatusMessage"`
+		Msg             message  `json:"msg"`
+		UsersConnected  []string `json:"usersConnected"`
+	}{
+		owner,
+		isStatusMessage,
+		msg,
+		usersConnected,
+	}
+
+	err = mc.Conn.WriteJSON(myMsg)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	return
+}
+
 func asignChatVariables(mc *myConn, msg message, myID string) (idRoom, myToken, owner string, err error) {
 	myToken = msg.Token
 
@@ -156,4 +189,11 @@ func ping(mc *myConn) {
 			return
 		}
 	}
+}
+
+func getUsersIntoRoom(room map[string]myConn) (users []string) {
+	for k := range room {
+		users = append(users, room[k].Owner)
+	}
+	return
 }

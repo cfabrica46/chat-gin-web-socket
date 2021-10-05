@@ -82,9 +82,13 @@ class FormChat extends React.Component {
             console.log(message);
 
             if (message.msg.body === "has joined the chat") {
-                let newUsers = this.state.users;
-                newUsers.push(message.owner);
-                this.setState({ users: newUsers });
+                if (message.owner === this.props.owner) {
+                    this.setState({ users: message.usersConnected });
+                } else {
+                    let newUsers = this.state.users;
+                    newUsers.push(message.owner);
+                    this.setState({ users: newUsers });
+                }
             }
 
             if (message.isStatusMessage) {
