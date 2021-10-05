@@ -46,6 +46,12 @@ function DisplayMessages(props) {
     );
 }
 
+function arrayRemove(arr, value) {
+    return arr.filter(function (ele) {
+        return ele != value;
+    });
+}
+
 class FormChat extends React.Component {
     state = {
         value: "",
@@ -79,16 +85,20 @@ class FormChat extends React.Component {
             let messageClass;
             let message = JSON.parse(m.data);
 
-            console.log(message);
+            if (message.usersConnected) {
+                this.setState({ users: message.usersConnected });
+                return;
+            }
 
             if (message.msg.body === "has joined the chat") {
-                if (message.owner === this.props.owner) {
-                    this.setState({ users: message.usersConnected });
-                } else {
-                    let newUsers = this.state.users;
-                    newUsers.push(message.owner);
-                    this.setState({ users: newUsers });
-                }
+                let newUsers = this.state.users;
+                newUsers.push(message.owner);
+                this.setState({ users: newUsers });
+            }
+
+            if (message.msg.body === "has gone out to the chat") {
+                let newUsers = arrayRemove(this.state.users, message.owner);
+                this.setState({ users: newUsers });
             }
 
             if (message.isStatusMessage) {
@@ -130,7 +140,6 @@ class FormChat extends React.Component {
         //     newMsgs.push(myMsg);
         //     this.setState({ msgs: newMsgs });
         //     this.setState({ value: "" });
-        //     console.log("The connection has been closed successfully.");
         // };
     }
 

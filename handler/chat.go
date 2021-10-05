@@ -18,11 +18,6 @@ type myConn struct {
 	mu    *sync.Mutex
 }
 
-type welcomeMessage struct {
-	Token          string   `json:"token"`
-	UsersConnected []string `json:"usersConnected"`
-}
-
 type message struct {
 	Token string `json:"token"`
 	Body  string `json:"body"`
@@ -67,7 +62,9 @@ func Chat(c *gin.Context) {
 	go sendWelcomeMessage(mc, idRoom)
 
 	for i := range rooms[idRoom] {
-		go sendMessage(rooms[idRoom][i], owner, true, message{Body: messageConnect})
+		if rooms[idRoom][i] != mc {
+			go sendMessage(rooms[idRoom][i], owner, true, message{Body: messageConnect})
+		}
 	}
 
 	go ping(mc)
@@ -83,10 +80,6 @@ func Chat(c *gin.Context) {
 				mc := rooms[idRoom][i]
 				go sendMessage(mc, owner, true, m)
 			}
-			return
-		}
-
-		if msg.Token == "" {
 			return
 		}
 
