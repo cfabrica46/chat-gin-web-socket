@@ -15,7 +15,9 @@ body {
     // height: 100vh;
 
     .title {
+        box-sizing: border-box;
         margin: 0;
+        padding-top: 20px;
         height: calc(var(--vh, 1vh) * 10);
         // height: 10%;
         $stroke-width: 35px * 0.2;
@@ -36,6 +38,7 @@ body {
     }
 
     .form-login {
+        margin-top: 20px;
         width: 300px;
         height: 270px;
         padding: 20px 40px;
@@ -84,11 +87,10 @@ body {
     }
 
     .chat {
+        box-sizing: border-box;
         width: 100vw;
-        // height: 100vh;
         height: calc(var(--vh, 1vh) * 90);
-        // height: 90%;
-        // height: 100vh;
+        padding-bottom: 10px;
         .form-message {
             top: 50%;
             height: 100%;
