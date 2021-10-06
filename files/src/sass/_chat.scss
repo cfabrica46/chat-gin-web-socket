@@ -19,7 +19,7 @@ body {
     .title {
         box-sizing: border-box;
         margin: 0;
-        padding-top: 20px;
+        margin-bottom: 5px;
         // height: calc(var(--vh, 1vh) * 10);
         height: 10vh;
         $stroke-width: 35px * 0.2;
@@ -101,7 +101,7 @@ body {
             cursor: pointer;
             font-weight: bold;
             height: 10%;
-            // margin-bottom: 20px;
+            margin-bottom: 10px;
             color: $darkColor;
             text-align: center;
             .chat-number-users-text {
@@ -147,6 +147,7 @@ body {
                 // flex-shrink: 3;
                 width: 100%;
                 padding: 10px;
+                margin-bottom: 5px;
                 display: inline-block;
                 border: 1px solid $deathColor;
                 transition: ease 0.3s, border 0.3s;
