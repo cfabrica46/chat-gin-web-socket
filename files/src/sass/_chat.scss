@@ -97,16 +97,27 @@ body {
         align-items: center;
         justify-content: space-around;
 
+        .chat-idRoom {
+            width: 100%;
+            font-weight: bold;
+            padding-bottom: 20px;
+            color: $darkColor;
+            text-align: center;
+            font-family: Courier;
+            font-size: 2em;
+            border-bottom: 2px solid $deathColor;
+            margin-bottom: 0;
+        }
+
         .chat-number-users {
             cursor: pointer;
             font-weight: bold;
-            height: 10%;
-            margin-bottom: 10px;
             color: $darkColor;
             text-align: center;
             .chat-number-users-text {
                 font-family: Courier;
                 font-size: 1.4em;
+                padding: 0;
             }
         }
 
@@ -115,7 +126,6 @@ body {
             height: 70%;
             width: 100%;
             overflow-y: scroll;
-            padding: 0 10px;
             border-top: 2px solid $deathColor;
             flex: 1;
             .chat-msg {
@@ -147,7 +157,6 @@ body {
                 // flex-shrink: 3;
                 width: 100%;
                 padding: 10px;
-                margin-bottom: 5px;
                 display: inline-block;
                 border: 1px solid $deathColor;
                 transition: ease 0.3s, border 0.3s;

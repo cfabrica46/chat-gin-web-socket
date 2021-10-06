@@ -153,6 +153,7 @@ class FormChat extends React.Component {
     render() {
         return (
             <div className="chat" id="chat">
+                <p className="chat-idRoom">ROOM: {this.props.idRoom}</p>
                 <DisplayNumberUsers
                     onClickShow={() => this.handleShowUsers()}
                     onClickOcult={() => this.handleOcultUsers()}
