@@ -32,7 +32,7 @@ function DisplayUsers(props) {
 
 function DisplayMessages(props) {
     return (
-        <div className="chat-msgs">
+        <div className="chat-msgs" id="chat-msgs">
             {props.messages.map((message) => (
                 <h3 className={`chat-msg ${message.msgClass}`}>
                     {message.isStatusMessage
@@ -70,6 +70,11 @@ class FormChat extends React.Component {
 
     handleOcultUsers = () => {
         this.setState({ showUsers: false });
+    };
+
+    scrollDown = () => {
+        let msgsDiv = document.getElementById("chat-msgs");
+        msgsDiv.scrollTop = msgsDiv.scrollHeight;
     };
 
     componentDidMount() {
@@ -124,6 +129,8 @@ class FormChat extends React.Component {
                 newMsgs.push(myMsg);
                 this.setState({ msgs: newMsgs });
             }
+
+            this.scrollDown();
         };
 
         // this.ws.onclose = () => {
