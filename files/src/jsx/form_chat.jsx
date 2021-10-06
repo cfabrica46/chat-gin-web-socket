@@ -77,6 +77,13 @@ class FormChat extends React.Component {
         let vh = window.innerHeight * 0.01;
         document.getElementById("chat").style.setProperty("--vh", `${vh}px`);
 
+        window.addEventListener("resize", function (data) {
+            let vh = window.innerHeight * 0.01;
+            document
+                .getElementById("chat")
+                .style.setProperty("--vh", `${vh}px`);
+        });
+
         this.ws.onopen = () => {
             let message = new Message(this.props.token, "");
             this.ws.send(JSON.stringify(message));
