@@ -16,7 +16,7 @@ body {
     .title {
         margin: 0;
         height: calc(var(--vh, 1vh) * 10);
-        height: 10vh;
+        // height: 10vh;
         $stroke-width: 35px * 0.2;
         text-transform: uppercase;
         font-size: 40px;
@@ -86,7 +86,7 @@ body {
         width: 100vw;
         // height: 100vh;
         height: calc(var(--vh, 1vh) * 90);
-        height: 90vh;
+        // height: 90vh;
         // height: 100vh;
         .form-message {
             top: 50%;
