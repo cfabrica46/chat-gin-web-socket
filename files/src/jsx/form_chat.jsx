@@ -9,10 +9,9 @@ class Message {
 
 function DisplayNumberUsers(props) {
     return (
-        <div onClick={() => props.onClickShow()} className="chat-number-users">
-            <p className="chat-number-users-text">
-                Users Connected: {props.elements.length}
-            </p>
+        <div onClick={() => props.onClickShow()} className="chat-info">
+            <h2 className="chat-idRoom">ROOM: {props.idRoom}</h2>
+            <p className="chat-number-users">Users: {props.elements.length}</p>
         </div>
     );
 }
@@ -153,7 +152,6 @@ class FormChat extends React.Component {
     render() {
         return (
             <div className="chat" id="chat">
-                <p className="chat-idRoom">ROOM: {this.props.idRoom}</p>
                 <DisplayNumberUsers
                     onClickShow={() => this.handleShowUsers()}
                     onClickOcult={() => this.handleOcultUsers()}

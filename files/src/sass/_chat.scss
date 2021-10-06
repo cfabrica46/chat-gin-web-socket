@@ -9,12 +9,10 @@ body {
 
 .main {
     box-sizing: border-box;
-    // height: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding-bottom: 30px;
-    // height: 100vh;
 
     .title {
         box-sizing: border-box;
@@ -90,34 +88,37 @@ body {
         border-radius: 5px;
         border: 3px solid $deathColor;
         box-sizing: border-box;
-        width: 100vw;
+        width: auto;
+        max-width: 600px;
         height: 85vh;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: space-around;
 
-        .chat-idRoom {
-            width: 100%;
-            font-weight: bold;
-            padding-bottom: 20px;
-            color: $darkColor;
-            text-align: center;
-            font-family: Courier;
-            font-size: 2em;
-            border-bottom: 2px solid $deathColor;
-            margin-bottom: 0;
-        }
-
-        .chat-number-users {
+        .chat-info {
+            position: relative;
             cursor: pointer;
+            border-top: 2px solid $deathColor;
+            border-bottom: 2px solid $deathColor;
             font-weight: bold;
             color: $darkColor;
             text-align: center;
-            .chat-number-users-text {
+            width: 100%;
+
+            .chat-idRoom {
+                width: 100%;
                 font-family: Courier;
-                font-size: 1.4em;
-                padding: 0;
+                font-size: 2em;
+            }
+
+            .chat-number-users {
+                position: absolute;
+                font-family: Courier;
+                font-size: 1em;
+                right: 5px;
+                bottom: 0;
+                margin: 0;
             }
         }
 
@@ -125,8 +126,8 @@ body {
             box-sizing: border-box;
             height: 70%;
             width: 100%;
-            overflow-y: scroll;
-            border-top: 2px solid $deathColor;
+            padding: 0 5px;
+            overflow: auto;
             flex: 1;
             .chat-msg {
                 font-family: Courier;
@@ -152,9 +153,8 @@ body {
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
+
             .chat-input--message {
-                // flex-grow: 3;
-                // flex-shrink: 3;
                 width: 100%;
                 padding: 10px;
                 display: inline-block;
@@ -218,5 +218,16 @@ body {
                 color: $deathColor;
             }
         }
+    }
+}
+
+@media (min-width: 600px) {
+    .body {
+        position: relative;
+    }
+    .chat {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
     }
 }
