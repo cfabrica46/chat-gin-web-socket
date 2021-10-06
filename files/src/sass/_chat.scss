@@ -4,22 +4,24 @@ body {
     padding: 0;
     max-height: 100vh;
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 .main {
     box-sizing: border-box;
-    height: auto;
+    // height: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-bottom: 30px;
     // height: 100vh;
 
     .title {
         box-sizing: border-box;
         margin: 0;
         padding-top: 20px;
-        height: calc(var(--vh, 1vh) * 10);
-        // height: 10%;
+        // height: calc(var(--vh, 1vh) * 10);
+        height: 10vh;
         $stroke-width: 35px * 0.2;
         text-transform: uppercase;
         font-size: 40px;
@@ -89,8 +91,9 @@ body {
     .chat {
         box-sizing: border-box;
         width: 100vw;
-        height: calc(var(--vh, 1vh) * 90);
-        padding-bottom: 10px;
+        // height: calc(var(--vh, 1vh) * 90);
+        height: 75vh;
+        // padding-bottom: 10px;
         .form-message {
             top: 50%;
             height: 100%;
