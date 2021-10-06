@@ -12,7 +12,6 @@ body {
     align-items: center;
 
     .title {
-        display: none;
         margin: 0;
         height: 10vh;
         $stroke-width: 35px * 0.2;
@@ -83,7 +82,7 @@ body {
     .chat {
         width: 100vw;
         // height: 100vh;
-        height: calc(var(--vh, 1vh) * 100);
+        height: calc(var(--vh, 1vh) * 90);
         // height: 100vh;
         .form-message {
             top: 50%;
