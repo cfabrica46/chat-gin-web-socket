@@ -74,16 +74,6 @@ class FormChat extends React.Component {
     };
 
     componentDidMount() {
-        let vh = window.innerHeight * 0.01;
-        document.getElementById("chat").style.setProperty("--vh", `${vh}px`);
-
-        window.addEventListener("resize", function (data) {
-            let vh = window.innerHeight * 0.01;
-            document
-                .getElementById("chat")
-                .style.setProperty("--vh", `${vh}px`);
-        });
-
         this.ws.onopen = () => {
             let message = new Message(this.props.token, "");
             this.ws.send(JSON.stringify(message));
@@ -163,34 +153,32 @@ class FormChat extends React.Component {
     render() {
         return (
             <div className="chat" id="chat">
+                <DisplayNumberUsers
+                    onClickShow={() => this.handleShowUsers()}
+                    onClickOcult={() => this.handleOcultUsers()}
+                    elements={this.state.users}
+                    showUsers={this.state.showUsers}
+                    idRoom={this.props.idRoom}
+                />
+                <DisplayMessages messages={this.state.msgs} />
                 <form
                     className="form form-message"
                     onSubmit={this.handleSubmit}
                 >
-                    <DisplayNumberUsers
-                        onClickShow={() => this.handleShowUsers()}
-                        onClickOcult={() => this.handleOcultUsers()}
-                        elements={this.state.users}
-                        showUsers={this.state.showUsers}
-                        idRoom={this.props.idRoom}
+                    <input
+                        autoFocus
+                        className="chat-input--message"
+                        type="text"
+                        name="message"
+                        value={this.state.value}
+                        onChange={this.handleChange}
+                        required
                     />
-                    <DisplayMessages messages={this.state.msgs} />
-                    <div className="chat-input">
-                        <input
-                            autoFocus
-                            className="chat-input--message"
-                            type="text"
-                            name="message"
-                            value={this.state.value}
-                            onChange={this.handleChange}
-                            required
-                        />
-                        <input
-                            className="chat-input--submit"
-                            type="submit"
-                            value="Submit"
-                        />
-                    </div>
+                    <input
+                        className="chat-input--submit"
+                        type="submit"
+                        value="Submit"
+                    />
                 </form>
                 {this.state.showUsers && (
                     <DisplayUsers
