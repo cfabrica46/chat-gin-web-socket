@@ -104,6 +104,7 @@ body {
             color: $darkColor;
             text-align: center;
             width: 100%;
+            padding-bottom: 10px;
 
             .chat-idRoom {
                 width: 100%;
@@ -118,6 +119,15 @@ body {
                 right: 5px;
                 bottom: 0;
                 margin: 0;
+                margin-bottom: 5px;
+                border: 1px solid $darkColor;
+                border-radius: 5px;
+                padding: 5px;
+                transition: 0.2s all;
+                &:hover {
+                    background-color: $darkColor;
+                    color: white;
+                }
             }
         }
 
@@ -174,6 +184,7 @@ body {
                 cursor: pointer;
                 filter: invert(35%) sepia(21%) saturate(1105%)
                     hue-rotate(143deg) brightness(94%) contrast(90%);
+                transition: 0.2s all;
                 &:hover {
                     filter: invert(39%) sepia(50%) saturate(1351%)
                         hue-rotate(143deg) brightness(95%) contrast(91%);
