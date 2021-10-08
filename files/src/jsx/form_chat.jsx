@@ -181,9 +181,11 @@ class FormChat extends React.Component {
                         required
                     />
                     <input
+                        type="image"
                         className="chat-input--submit"
-                        type="submit"
-                        value="Submit"
+                        name="submit"
+                        src="/dist/check.svg"
+                        alt="submit"
                     />
                 </form>
                 {this.state.showUsers && (

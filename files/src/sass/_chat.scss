@@ -170,13 +170,14 @@ body {
             }
             .chat-input--submit {
                 right: 5px;
-                padding: 10px;
-                border: 1px solid $deathColor;
-                font-size: 1.2em;
-                border-radius: 5px;
+                height: 100%;
                 cursor: pointer;
-                background-color: $darkColor;
-                color: white;
+                filter: invert(35%) sepia(21%) saturate(1105%)
+                    hue-rotate(143deg) brightness(94%) contrast(90%);
+                &:hover {
+                    filter: invert(39%) sepia(50%) saturate(1351%)
+                        hue-rotate(143deg) brightness(95%) contrast(91%);
+                }
             }
         }
     }
