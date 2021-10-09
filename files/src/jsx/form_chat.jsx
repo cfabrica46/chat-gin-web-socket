@@ -180,12 +180,10 @@ class FormChat extends React.Component {
                         onChange={this.handleChange}
                         required
                     />
-                    <label>
-                        <input className="hidden" type="submit" />
-                        <svg className="chat-input--submit">
-                            <use xlinkHref="#check"></use>
-                        </svg>
+                    <label for="mySubmit" className="chat-submit-container">
+                        <i class="fas fa-chevron-right fa-3x chat-input--submit"></i>
                     </label>
+                    <input id="mySubmit" type="submit" className="hidden" />
                 </form>
                 {this.state.showUsers && (
                     <DisplayUsers
