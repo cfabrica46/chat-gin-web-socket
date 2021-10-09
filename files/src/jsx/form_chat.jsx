@@ -182,8 +182,8 @@ class FormChat extends React.Component {
                     />
                     <label for="mySubmit" className="chat-submit-container">
                         <i class="fas fa-chevron-right chat-input--submit"></i>
+                        <input id="mySubmit" type="submit" className="hidden" />
                     </label>
-                    <input id="mySubmit" type="submit" className="hidden" />
                 </form>
                 {this.state.showUsers && (
                     <DisplayUsers
