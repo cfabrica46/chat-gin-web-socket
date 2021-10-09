@@ -181,7 +181,7 @@ class FormChat extends React.Component {
                         required
                     />
                     <label for="mySubmit" className="chat-submit-container">
-                        <i class="fas fa-chevron-right fa-3x chat-input--submit"></i>
+                        <i class="fas fa-chevron-right chat-input--submit"></i>
                     </label>
                     <input id="mySubmit" type="submit" className="hidden" />
                 </form>
