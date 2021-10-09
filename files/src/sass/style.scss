@@ -1,16 +1,18 @@
-@font-face {
-    font-family: "Font Awesome 5 Free";
-    font-style: normal;
-    font-weight: 900;
-    src: url("/fontawesome-free/webfonts/fa-solid-900.eot");
-    src: url("/fontawesome-free/webfonts/fa-solid-900.eot?#iefix")
-            format("embedded-opentype"),
-        url("/fontawesome-free/webfonts/fa-solid-900.woff2") format("woff2"),
-        url("/fontawesome-free/webfonts/fa-solid-900.woff") format("woff"),
-        url("/fontawesome-free/webfonts/fa-solid-900.ttf") format("truetype"),
-        url("/fontawesome-free/webfonts/fa-solid-900.svg#fontawesome")
-            format("svg");
-}
+// @font-face {
+//     font-family: "icons";
+//     font-style: normal;
+//     font-weight: 900;
+
+//     src: url("/fontawesome-free/webfonts/fa-solid-900.eot");
+//     src: url("/fontawesome-free/webfonts/fa-solid-900.eot?#iefix")
+//             format("embedded-opentype"),
+//         url("/fontawesome-free/webfonts/fa-solid-900.woff2") format("woff2"),
+//         url("/fontawesome-free/webfonts/fa-solid-900.woff") format("woff"),
+//         url("/fontawesome-free/webfonts/fa-solid-900.ttf") format("truetype"),
+//         url("/fontawesome-free/webfonts/fa-solid-900.svg#fontawesome")
+//             format("svg");
+// }
+
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap");
 @import "variables";
 @import "background";
