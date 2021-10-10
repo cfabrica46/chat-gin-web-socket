@@ -1,4 +1,6 @@
 import React from "react";
+import ReactDOM from "react-dom";
+import { Index } from "./index";
 
 class Message {
     constructor(token, body) {
@@ -7,11 +9,20 @@ class Message {
     }
 }
 
-function DisplayNumberUsers(props) {
+function DisplayInfo(props) {
     return (
-        <div onClick={() => props.onClickShow()} className="chat-info">
+        <div className="chat-info">
+            <i
+                onClick={() => props.onClickIndex()}
+                class="fas fa-arrow-circle-left chat-exit"
+            ></i>
             <h2 className="chat-idRoom">ROOM: {props.idRoom}</h2>
-            <p className="chat-number-users">Users: {props.elements.length}</p>
+            <p
+                onClick={() => props.onClickShow()}
+                className="chat-number-users"
+            >
+                Users: {props.elements.length}
+            </p>
         </div>
     );
 }
@@ -70,6 +81,11 @@ class FormChat extends React.Component {
 
     handleOcultUsers = () => {
         this.setState({ showUsers: false });
+    };
+
+    handleIndex = () => {
+        this.ws.close();
+        ReactDOM.render(<Index />, document.getElementById("root"));
     };
 
     scrollDown = () => {
@@ -132,20 +148,6 @@ class FormChat extends React.Component {
 
             this.scrollDown();
         };
-
-        // this.ws.onclose = () => {
-        //     let myMsg = {
-        //         owner: this.props.owner,
-        //         body: "has gone out to the chat",
-        //         msgClass: "chat-msg--system",
-        //         isStatusMessage: true,
-        //     };
-
-        //     let newMsgs = this.state.msgs;
-        //     newMsgs.push(myMsg);
-        //     this.setState({ msgs: newMsgs });
-        //     this.setState({ value: "" });
-        // };
     }
 
     handleSubmit = (event) => {
@@ -159,7 +161,8 @@ class FormChat extends React.Component {
     render() {
         return (
             <div className="chat" id="chat">
-                <DisplayNumberUsers
+                <DisplayInfo
+                    onClickIndex={() => this.handleIndex()}
                     onClickShow={() => this.handleShowUsers()}
                     onClickOcult={() => this.handleOcultUsers()}
                     elements={this.state.users}

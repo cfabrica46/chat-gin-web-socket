@@ -102,13 +102,24 @@ body {
 
         .chat-info {
             position: relative;
-            cursor: pointer;
             border-bottom: 2px solid $deathColor;
             font-weight: bold;
             color: $darkColor;
             text-align: center;
             width: 100%;
-            padding-bottom: 10px;
+
+            .chat-exit {
+                cursor: pointer;
+                position: absolute;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 3em;
+                transition: 0.2s all;
+                &:hover {
+                    color: $secundaryColor;
+                }
+            }
 
             .chat-idRoom {
                 width: 100%;
@@ -118,10 +129,11 @@ body {
 
             .chat-number-users {
                 position: absolute;
+                cursor: pointer;
                 font-family: Courier;
                 font-size: 1em;
                 right: 5px;
-                bottom: 0;
+                bottom: 5px;
                 margin: 0;
                 margin-bottom: 5px;
                 border: 1px solid $darkColor;
@@ -183,8 +195,6 @@ body {
                 }
             }
             .chat-input--submit {
-                // font-family: "icons";
-                // font-weight: 900;
                 font-size: 3em;
                 cursor: pointer;
                 filter: invert(35%) sepia(21%) saturate(1105%)
@@ -212,7 +222,7 @@ body {
         height: 50%;
         width: 50%;
         padding: 10px 30px;
-        overflow-y: scroll;
+        overflow: auto;
 
         .fa-times {
             cursor: pointer;
