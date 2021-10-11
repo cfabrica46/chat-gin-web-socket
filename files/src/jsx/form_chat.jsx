@@ -29,7 +29,7 @@ function DisplayInfo(props) {
 
 function DisplayUsers(props) {
     return (
-        <div className="chat-users">
+        <div ref={props.ref} className="chat-users">
             <i onClick={() => props.onClickOcult()} class="fas fa-times"></i>
             <p className="chat-users--title">Users Connected</p>
             <ul className="chat-users--list">
@@ -69,6 +69,8 @@ class FormChat extends React.Component {
         showUsers: false,
     };
 
+    wrapperRef = React.createRef();
+
     ws = new WebSocket(`${localStorage.getItem("host")}/api/v1/chat`);
 
     handleChange = (event) => {
@@ -93,7 +95,18 @@ class FormChat extends React.Component {
         msgsDiv.scrollTop = msgsDiv.scrollHeight;
     };
 
+    handleClickOutside = (event) => {
+        if (
+            this.wrapperRef.current &&
+            !this.wrapperRef.current.contains(event.target)
+        ) {
+            this.handleOcultUsers();
+        }
+    };
+
     componentDidMount() {
+        document.addEventListener("mousedown", this.handleClickOutside);
+
         this.ws.onopen = () => {
             let message = new Message(this.props.token, "");
             this.ws.send(JSON.stringify(message));
@@ -150,6 +163,10 @@ class FormChat extends React.Component {
         };
     }
 
+    componentWillUnmount() {
+        document.removeEventListener("mousedown", this.handleClickOutside);
+    }
+
     handleSubmit = (event) => {
         event.preventDefault();
 
@@ -189,10 +206,12 @@ class FormChat extends React.Component {
                     </label>
                 </form>
                 {this.state.showUsers && (
-                    <DisplayUsers
-                        onClickOcult={() => this.handleOcultUsers()}
-                        elements={this.state.users}
-                    />
+                    <div ref={this.wrapperRef}>
+                        <DisplayUsers
+                            onClickOcult={() => this.handleOcultUsers()}
+                            elements={this.state.users}
+                        />
+                    </div>
                 )}
             </div>
         );

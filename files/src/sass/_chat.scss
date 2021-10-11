@@ -214,7 +214,6 @@ body {
         position: absolute;
         box-sizing: border-box;
         border-radius: 5px;
-        margin-top: 70px;
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
@@ -226,6 +225,7 @@ body {
 
         .fa-times {
             cursor: pointer;
+            color: $darkColor;
             position: absolute;
             right: 20px;
             top: 20px;
