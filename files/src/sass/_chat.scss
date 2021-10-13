@@ -64,6 +64,7 @@ body {
             margin-bottom: 15px;
             font-size: 1.2em;
             border-radius: 5px;
+            outline: none;
 
             &:focus {
                 border: 1px solid $secundaryColor;
@@ -110,12 +111,15 @@ body {
 
             .chat-exit {
                 cursor: pointer;
+                padding: 0;
+                color: $darkColor;
                 position: absolute;
                 left: 10px;
                 top: 50%;
                 transform: translateY(-50%);
                 font-size: 3em;
                 transition: 0.2s all;
+                border: none;
                 &:hover {
                     color: $secundaryColor;
                 }
@@ -189,13 +193,14 @@ body {
                 font-size: 1.2em;
                 border-radius: 5px;
                 margin-right: 5px;
+                outline: none;
 
                 &:focus {
                     border: 1px solid $secundaryColor;
                 }
             }
             .chat-input--submit {
-                font-size: 3em;
+                font-size: 40px;
                 cursor: pointer;
                 filter: invert(35%) sepia(21%) saturate(1105%)
                     hue-rotate(143deg) brightness(94%) contrast(90%);

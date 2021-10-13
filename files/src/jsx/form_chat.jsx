@@ -12,10 +12,10 @@ class Message {
 function DisplayInfo(props) {
     return (
         <div className="chat-info">
-            <i
+            <button
                 onClick={() => props.onClickIndex()}
                 class="fas fa-arrow-circle-left chat-exit"
-            ></i>
+            ></button>
             <h2 className="chat-idRoom">ROOM: {props.idRoom}</h2>
             <p
                 onClick={() => props.onClickShow()}
