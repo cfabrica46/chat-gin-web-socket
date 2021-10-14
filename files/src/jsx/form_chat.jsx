@@ -160,9 +160,9 @@ class FormChat extends React.Component {
                 this.setState({ msgs: newMsgs });
             }
 
-            this.scrollDown();
             this.setState({ loaded: true });
             console.log(this.state.loaded);
+            this.scrollDown();
         };
     }
 
