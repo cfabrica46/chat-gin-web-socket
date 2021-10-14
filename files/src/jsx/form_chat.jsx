@@ -227,7 +227,18 @@ class FormChat extends React.Component {
                             </div>
                         )}
                     </div>
-                ) : null}
+                ) : (
+                    <div class="lds-roller">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                )}
             </div>
         );
     }
