@@ -114,6 +114,8 @@ class FormChat extends React.Component {
         };
 
         this.ws.onmessage = (m) => {
+            this.setState({ loaded: true });
+
             let ping = false;
             let messageClass;
             let message = JSON.parse(m.data);
@@ -122,8 +124,6 @@ class FormChat extends React.Component {
                 this.setState({ users: message.usersConnected });
                 return;
             }
-
-            this.setState({ loaded: true });
 
             if (message.msg.body === "has joined the chat") {
                 let newUsers = this.state.users;
