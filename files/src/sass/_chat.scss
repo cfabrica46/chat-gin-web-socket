@@ -22,7 +22,6 @@ body {
         box-sizing: border-box;
         margin: 0;
         margin-bottom: 5px;
-        // height: calc(var(--vh, 1vh) * 10);
         height: 10vh;
         $stroke-width: 35px * 0.2;
         text-transform: uppercase;
@@ -112,6 +111,7 @@ body {
             .chat-exit {
                 cursor: pointer;
                 padding: 0;
+                background-color: white;
                 color: $darkColor;
                 position: absolute;
                 left: 10px;
