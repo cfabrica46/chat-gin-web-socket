@@ -161,7 +161,6 @@ class FormChat extends React.Component {
             }
 
             this.setState({ loaded: true });
-            console.log(this.state.loaded);
             this.scrollDown();
         };
     }
@@ -179,7 +178,6 @@ class FormChat extends React.Component {
     };
 
     render() {
-        console.log(this.state.loaded);
         return (
             <div>
                 {this.state.loaded ? (
