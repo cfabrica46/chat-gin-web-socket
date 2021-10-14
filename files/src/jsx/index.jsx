@@ -7,13 +7,13 @@ import { Background } from "./background";
 class Index extends React.Component {
     render() {
         return (
-            <div>
+            <>
                 <Background />
                 <main className="main">
                     <p className="title title--login">Welcome To Chat</p>
                     <Form />
                 </main>
-            </div>
+            </>
         );
     }
 }

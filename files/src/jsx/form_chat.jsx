@@ -123,6 +123,8 @@ class FormChat extends React.Component {
                 return;
             }
 
+            this.setState({ loaded: true });
+
             if (message.msg.body === "has joined the chat") {
                 let newUsers = this.state.users;
                 newUsers.push(message.owner);
@@ -160,7 +162,6 @@ class FormChat extends React.Component {
                 this.setState({ msgs: newMsgs });
             }
 
-            this.setState({ loaded: true });
             this.scrollDown();
         };
     }
