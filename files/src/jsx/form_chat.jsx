@@ -106,8 +106,6 @@ class FormChat extends React.Component {
     };
 
     componentDidMount() {
-        this.setState({ loaded: true });
-        console.log(this.state.loaded);
         document.addEventListener("mousedown", this.handleClickOutside);
 
         this.ws.onopen = () => {
@@ -163,6 +161,8 @@ class FormChat extends React.Component {
             }
 
             this.scrollDown();
+            this.setState({ loaded: true });
+            console.log(this.state.loaded);
         };
     }
 
