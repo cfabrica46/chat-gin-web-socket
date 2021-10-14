@@ -67,6 +67,7 @@ class FormChat extends React.Component {
         msgs: [],
         users: [],
         showUsers: false,
+        loaded: false,
     };
 
     wrapperRef = React.createRef();
@@ -105,6 +106,8 @@ class FormChat extends React.Component {
     };
 
     componentDidMount() {
+        this.setState({ loaded: true });
+        console.log(this.state.loaded);
         document.addEventListener("mousedown", this.handleClickOutside);
 
         this.ws.onopen = () => {
@@ -176,42 +179,56 @@ class FormChat extends React.Component {
     };
 
     render() {
+        console.log(this.state.loaded);
         return (
-            <div className="chat" id="chat">
-                <DisplayInfo
-                    onClickIndex={() => this.handleIndex()}
-                    onClickShow={() => this.handleShowUsers()}
-                    onClickOcult={() => this.handleOcultUsers()}
-                    elements={this.state.users}
-                    showUsers={this.state.showUsers}
-                    idRoom={this.props.idRoom}
-                />
-                <DisplayMessages messages={this.state.msgs} />
-                <form
-                    className="form form-message"
-                    onSubmit={this.handleSubmit}
-                >
-                    <input
-                        autoFocus
-                        className="chat-input--message"
-                        type="text"
-                        name="message"
-                        value={this.state.value}
-                        onChange={this.handleChange}
-                        required
-                    />
-                    <label for="mySubmit" className="chat-submit-container">
-                        <i class="fas fa-chevron-right chat-input--submit"></i>
-                        <input id="mySubmit" type="submit" className="hidden" />
-                    </label>
-                </form>
-                {this.state.showUsers && (
-                    <div ref={this.wrapperRef}>
-                        <DisplayUsers
+            <div>
+                {this.state.loaded ? (
+                    <div className="chat" id="chat">
+                        <DisplayInfo
+                            onClickIndex={() => this.handleIndex()}
+                            onClickShow={() => this.handleShowUsers()}
                             onClickOcult={() => this.handleOcultUsers()}
                             elements={this.state.users}
+                            showUsers={this.state.showUsers}
+                            idRoom={this.props.idRoom}
                         />
+                        <DisplayMessages messages={this.state.msgs} />
+                        <form
+                            className="form form-message"
+                            onSubmit={this.handleSubmit}
+                        >
+                            <input
+                                autoFocus
+                                className="chat-input--message"
+                                type="text"
+                                name="message"
+                                value={this.state.value}
+                                onChange={this.handleChange}
+                                required
+                            />
+                            <label
+                                for="mySubmit"
+                                className="chat-submit-container"
+                            >
+                                <i class="fas fa-chevron-right chat-input--submit"></i>
+                                <input
+                                    id="mySubmit"
+                                    type="submit"
+                                    className="hidden"
+                                />
+                            </label>
+                        </form>
+                        {this.state.showUsers && (
+                            <div ref={this.wrapperRef}>
+                                <DisplayUsers
+                                    onClickOcult={() => this.handleOcultUsers()}
+                                    elements={this.state.users}
+                                />
+                            </div>
+                        )}
                     </div>
+                ) : (
+                    <h1>Loading</h1>
                 )}
             </div>
         );
