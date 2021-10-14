@@ -106,7 +106,7 @@ class FormChat extends React.Component {
     };
 
     componentDidMount() {
-        this.setState({ loaded: true });
+        // this.setState({ loaded: true });
         console.log(this.state.loaded);
         document.addEventListener("mousedown", this.handleClickOutside);
 
