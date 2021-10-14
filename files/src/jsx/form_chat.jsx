@@ -179,7 +179,7 @@ class FormChat extends React.Component {
 
     render() {
         return (
-            <div className="container-chat">
+            <>
                 {this.state.loaded ? (
                     <div className="chat" id="chat">
                         <DisplayInfo
@@ -237,7 +237,7 @@ class FormChat extends React.Component {
                         <div></div>
                     </div>
                 )}
-            </div>
+            </>
         );
     }
 }
