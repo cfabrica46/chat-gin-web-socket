@@ -227,9 +227,7 @@ class FormChat extends React.Component {
                             </div>
                         )}
                     </div>
-                ) : (
-                    <h1>Loading</h1>
-                )}
+                ) : null}
             </div>
         );
     }
