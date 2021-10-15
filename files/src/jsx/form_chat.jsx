@@ -143,7 +143,7 @@ class FormChat extends React.Component {
                 }
             } else {
                 if (message.owner === this.props.owner) {
-                    messageClass = "chat-msg--user";
+                    return;
                 } else {
                     messageClass = "chat-msg--other";
                 }
@@ -173,7 +173,21 @@ class FormChat extends React.Component {
     handleSubmit = (event) => {
         event.preventDefault();
 
+        //write message in div
+        let myMsg = {
+            owner: this.props.owner,
+            body: this.state.value,
+            msgClass: "chat-msg--user",
+            isStatusMessage: false,
+        };
+
+        let newMsgs = this.state.msgs;
+        newMsgs.push(myMsg);
+        this.setState({ msgs: newMsgs });
+
+        // Send Message
         let message = new Message(this.props.token, this.state.value);
+
         this.ws.send(JSON.stringify(message));
         this.setState({ value: "" });
     };
