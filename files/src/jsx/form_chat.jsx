@@ -143,6 +143,12 @@ class FormChat extends React.Component {
                 }
             } else {
                 if (message.owner === this.props.owner) {
+                    let newMsg = this.state.msgs[this.state.msgs.length - 1];
+                    newMsg.msgClass = "chat-msg--user";
+                    let newMsgs = this.state.msgs;
+                    newMsgs.pop();
+                    newMsgs.push(newMsg);
+                    this.setState({ msgs: newMsgs });
                     return;
                 } else {
                     messageClass = "chat-msg--other";
@@ -177,7 +183,7 @@ class FormChat extends React.Component {
         let myMsg = {
             owner: this.props.owner,
             body: this.state.value,
-            msgClass: "chat-msg--user",
+            msgClass: "chat-msg--send",
             isStatusMessage: false,
         };
 

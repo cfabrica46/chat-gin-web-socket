@@ -169,6 +169,10 @@ body {
             .chat-msg--other {
                 color: $deathColor;
             }
+            .chat-msg--send {
+                text-align: right;
+                color: $lightColor;
+            }
             .chat-msg--user {
                 text-align: right;
                 color: $secundaryColor;
@@ -189,14 +193,9 @@ body {
                 border-radius: 10px;
             }
 
-            /* Handle on hover */
             &::-webkit-scrollbar-thumb:hover {
                 background-color: $deathColor;
             }
-
-            // &::-webkit-scrollbar-track {
-            //     background-color: $darkColor;
-            // }
         }
 
         .form-message {
