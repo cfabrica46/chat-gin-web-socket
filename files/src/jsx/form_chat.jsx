@@ -46,9 +46,16 @@ function DisplayMessages(props) {
         <div className="chat-msgs" id="chat-msgs">
             {props.messages.map((message) => (
                 <h3 className={`chat-msg ${message.msgClass}`}>
-                    {message.isStatusMessage
+                    {message.msgClass === "chat-msg--system"
                         ? `${message.owner} ${message.body}`
-                        : `${message.owner}: ${message.body}`}
+                        : null}
+                    {message.msgClass === "chat-msg--other"
+                        ? `${message.owner}: ${message.body}`
+                        : null}
+                    {message.msgClass === "chat-msg--user" ||
+                    message.msgClass === "chat-msg--send"
+                        ? `${message.body} :${message.owner}`
+                        : null}
                 </h3>
             ))}
         </div>
@@ -68,7 +75,6 @@ class FormChat extends React.Component {
         users: [],
         showUsers: false,
         loaded: false,
-        // pendingMessages: [],
     };
 
     wrapperRef = React.createRef();
@@ -155,15 +161,6 @@ class FormChat extends React.Component {
                             return;
                         }
                     }
-
-                    // console.log(this.state.pendingMessages);
-
-                    // let newMsg = this.state.msgs[this.state.msgs.length - 1];
-                    // newMsg.msgClass = "chat-msg--user";
-                    // let newMsgs = this.state.msgs;
-                    // newMsgs.pop();
-                    // newMsgs.push(newMsg);
-                    // this.setState({ msgs: newMsgs });
                     return;
                 } else {
                     messageClass = "chat-msg--other";
@@ -201,12 +198,6 @@ class FormChat extends React.Component {
             msgClass: "chat-msg--send",
             isStatusMessage: false,
         };
-
-        // let pendingMsgs = this.state.pendingMessages;
-        // pendingMsgs.push(this.state.value);
-        // this.setState({
-        //     pendingMessages: pendingMsgs,
-        // });
 
         let newMsgs = this.state.msgs;
         newMsgs.push(myMsg);
