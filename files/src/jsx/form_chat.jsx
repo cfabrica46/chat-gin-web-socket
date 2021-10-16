@@ -68,6 +68,7 @@ class FormChat extends React.Component {
         users: [],
         showUsers: false,
         loaded: false,
+        // pendingMessages: [],
     };
 
     wrapperRef = React.createRef();
@@ -125,30 +126,44 @@ class FormChat extends React.Component {
                 return;
             }
 
-            if (message.msg.body === "has joined the chat") {
-                let newUsers = this.state.users;
-                newUsers.push(message.owner);
-                this.setState({ users: newUsers });
-            }
-
-            if (message.msg.body === "has gone out to the chat") {
-                let newUsers = arrayRemove(this.state.users, message.owner);
-                this.setState({ users: newUsers });
-            }
-
             if (message.isStatusMessage) {
+                if (message.msg.body === "has joined the chat") {
+                    let newUsers = this.state.users;
+                    newUsers.push(message.owner);
+                    this.setState({ users: newUsers });
+                }
+
+                if (message.msg.body === "has gone out to the chat") {
+                    let newUsers = arrayRemove(this.state.users, message.owner);
+                    this.setState({ users: newUsers });
+                }
+
                 messageClass = "chat-msg--system";
                 if (message.msg.body === "ping") {
                     ping = true;
                 }
             } else {
                 if (message.owner === this.props.owner) {
-                    let newMsg = this.state.msgs[this.state.msgs.length - 1];
-                    newMsg.msgClass = "chat-msg--user";
-                    let newMsgs = this.state.msgs;
-                    newMsgs.pop();
-                    newMsgs.push(newMsg);
-                    this.setState({ msgs: newMsgs });
+                    for (let i = 0; i < this.state.msgs.length; i++) {
+                        let newMsgs = this.state.msgs;
+                        if (
+                            message.msg.body === newMsgs[i].body &&
+                            newMsgs[i].msgClass === "chat-msg--send"
+                        ) {
+                            newMsgs[i].msgClass = "chat-msg--user";
+                            this.setState({ msgs: newMsgs });
+                            return;
+                        }
+                    }
+
+                    // console.log(this.state.pendingMessages);
+
+                    // let newMsg = this.state.msgs[this.state.msgs.length - 1];
+                    // newMsg.msgClass = "chat-msg--user";
+                    // let newMsgs = this.state.msgs;
+                    // newMsgs.pop();
+                    // newMsgs.push(newMsg);
+                    // this.setState({ msgs: newMsgs });
                     return;
                 } else {
                     messageClass = "chat-msg--other";
@@ -186,6 +201,12 @@ class FormChat extends React.Component {
             msgClass: "chat-msg--send",
             isStatusMessage: false,
         };
+
+        // let pendingMsgs = this.state.pendingMessages;
+        // pendingMsgs.push(this.state.value);
+        // this.setState({
+        //     pendingMessages: pendingMsgs,
+        // });
 
         let newMsgs = this.state.msgs;
         newMsgs.push(myMsg);
