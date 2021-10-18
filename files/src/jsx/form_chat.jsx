@@ -1,71 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Index } from "./index";
+import DisplayInfo from "./chat_info";
+import DisplayUsers from "./users";
+import DisplayMessages from "./messages";
 
 class Message {
     constructor(token, body) {
         this.token = token;
         this.body = body;
     }
-}
-
-function DisplayInfo(props) {
-    return (
-        <div className="chat-info">
-            <button
-                onClick={() => props.onClickIndex()}
-                class="fas fa-arrow-circle-left chat-exit"
-            ></button>
-            <h2 className="chat-idRoom">ROOM: {props.idRoom}</h2>
-            <p
-                onClick={() => props.onClickShow()}
-                className="chat-number-users"
-            >
-                Users: {props.elements.length}
-            </p>
-        </div>
-    );
-}
-
-function DisplayUsers(props) {
-    return (
-        <div ref={props.ref} className="chat-users">
-            <i onClick={() => props.onClickOcult()} class="fas fa-times"></i>
-            <p className="chat-users--title">Users Connected:</p>
-            <ul className="chat-users--list">
-                {props.elements.map((e) => (
-                    <li className="chat-users--user"> {e}</li>
-                ))}
-            </ul>
-        </div>
-    );
-}
-
-function DisplayMessages(props) {
-    return (
-        <div className="chat-msgs" id="chat-msgs">
-            {props.messages.map((message) => (
-                <h3 className={`chat-msg ${message.msgClass}`}>
-                    {message.msgClass === "chat-msg--system"
-                        ? `${message.owner} ${message.body}`
-                        : null}
-                    {message.msgClass === "chat-msg--other"
-                        ? `${message.owner}: ${message.body}`
-                        : null}
-                    {message.msgClass === "chat-msg--user" ||
-                    message.msgClass === "chat-msg--sending"
-                        ? `${message.body} :${message.owner}`
-                        : null}
-                </h3>
-            ))}
-        </div>
-    );
-}
-
-function arrayRemove(arr, value) {
-    return arr.filter(function (ele) {
-        return ele != value;
-    });
 }
 
 class FormChat extends React.Component {
