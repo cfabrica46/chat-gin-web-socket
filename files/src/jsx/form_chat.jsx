@@ -12,10 +12,18 @@ class Message {
     }
 }
 
+function removeElementIntoArray(arr, value) {
+    const index = arr.indexOf(value);
+    if (index > -1) {
+        arr.splice(index, 1);
+    }
+}
+
 class FormChat extends React.Component {
     state = {
         value: "",
         msgs: [],
+        pendingMsgs: [],
         users: [],
         showUsers: false,
         loaded: false,
@@ -84,8 +92,9 @@ class FormChat extends React.Component {
                 }
 
                 if (message.msg.body === "has gone out to the chat") {
-                    let newUsers = arrayRemove(this.state.users, message.owner);
-                    this.setState({ users: newUsers });
+                    let users = this.state.users;
+                    removeElementIntoArray(users, message.owner);
+                    this.setState({ users: users });
                 }
 
                 messageClass = "chat-msg--system";
@@ -94,14 +103,25 @@ class FormChat extends React.Component {
                 }
             } else {
                 if (message.owner === this.props.owner) {
-                    for (let i = this.state.msgs.length - 1; i >= 0; i--) {
-                        let newMsgs = this.state.msgs;
+                    for (let i = 0; i < this.state.pendingMsgs.length; i++) {
                         if (
-                            message.msg.body === newMsgs[i].body &&
-                            newMsgs[i].msgClass === "chat-msg--sending"
+                            message.msg.body === this.state.pendingMsgs[i].body
                         ) {
-                            newMsgs[i].msgClass = "chat-msg--user";
-                            this.setState({ msgs: newMsgs });
+                            let msgs = this.state.msgs;
+
+                            let sendMsg = this.state.pendingMsgs[i];
+                            sendMsg.msgClass = "chat-msg--user";
+
+                            msgs.push(sendMsg);
+
+                            let pendingMsgs = this.state.pendingMsgs;
+                            removeElementIntoArray(
+                                pendingMsgs,
+                                this.state.pendingMsgs[i]
+                            );
+
+                            this.setState({ pendingMsgs: pendingMsgs });
+                            this.setState({ msgs: msgs });
                             break;
                         }
                     }
@@ -110,7 +130,6 @@ class FormChat extends React.Component {
                     messageClass = "chat-msg--other";
                 }
             }
-
             let myMsg = {
                 owner: message.owner,
                 body: message.msg.body,
@@ -142,10 +161,16 @@ class FormChat extends React.Component {
             msgClass: "chat-msg--sending",
             isStatusMessage: false,
         };
+        console.log(myMsg);
 
-        let newMsgs = this.state.msgs;
-        newMsgs.push(myMsg);
-        this.setState({ msgs: newMsgs });
+        // let newMsgs = this.state.msgs;
+        // newMsgs.push(myMsg);
+        // this.setState({ msgs: newMsgs });
+
+        let pendingMsgs = this.state.pendingMsgs;
+        pendingMsgs.push(myMsg);
+        this.setState({ pendingMsgs: pendingMsgs });
+        console.log(this.state.pendingMsgs);
 
         // Send Message
         let message = new Message(this.props.token, this.state.value);
@@ -167,7 +192,10 @@ class FormChat extends React.Component {
                             showUsers={this.state.showUsers}
                             idRoom={this.props.idRoom}
                         />
-                        <DisplayMessages messages={this.state.msgs} />
+                        <DisplayMessages
+                            messages={this.state.msgs}
+                            pendingMsgs={this.state.pendingMsgs}
+                        />
                         <form
                             className="form form-message"
                             onSubmit={this.handleSubmit}
