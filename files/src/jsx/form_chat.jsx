@@ -53,7 +53,7 @@ function DisplayMessages(props) {
                         ? `${message.owner}: ${message.body}`
                         : null}
                     {message.msgClass === "chat-msg--user" ||
-                    message.msgClass === "chat-msg--send"
+                    message.msgClass === "chat-msg--sending"
                         ? `${message.body} :${message.owner}`
                         : null}
                 </h3>
@@ -150,15 +150,15 @@ class FormChat extends React.Component {
                 }
             } else {
                 if (message.owner === this.props.owner) {
-                    for (let i = 0; i < this.state.msgs.length; i++) {
+                    for (let i = this.state.msgs.length - 1; i >= 0; i--) {
                         let newMsgs = this.state.msgs;
                         if (
                             message.msg.body === newMsgs[i].body &&
-                            newMsgs[i].msgClass === "chat-msg--send"
+                            newMsgs[i].msgClass === "chat-msg--sending"
                         ) {
                             newMsgs[i].msgClass = "chat-msg--user";
                             this.setState({ msgs: newMsgs });
-                            return;
+                            break;
                         }
                     }
                     return;
@@ -195,7 +195,7 @@ class FormChat extends React.Component {
         let myMsg = {
             owner: this.props.owner,
             body: this.state.value,
-            msgClass: "chat-msg--send",
+            msgClass: "chat-msg--sending",
             isStatusMessage: false,
         };
 
