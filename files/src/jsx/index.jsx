@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./../sass/style.scss";
-import { Form } from "./form";
-import { Background } from "./background";
+import Login from "./login";
+import Background from "./background";
 
 class Index extends React.Component {
     render() {
@@ -11,13 +11,13 @@ class Index extends React.Component {
                 <Background />
                 <main className="main">
                     <p className="title title--login">Welcome To Chat</p>
-                    <Form />
+                    <Login />
                 </main>
             </>
         );
     }
 }
 
-export { Index };
+export default Index;
 
 ReactDOM.render(<Index />, document.getElementById("root"));

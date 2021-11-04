@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Chat } from "./chat";
+import ContainerChat from "./container_chat";
 
-class Form extends React.Component {
+class Login extends React.Component {
     state = {
         username: "",
         idRoom: "",
@@ -49,7 +49,7 @@ class Form extends React.Component {
             })
             .then((token) => {
                 ReactDOM.render(
-                    <Chat
+                    <ContainerChat
                         token={token.token}
                         idRoom={this.state.idRoom}
                         owner={this.state.username}
@@ -57,8 +57,6 @@ class Form extends React.Component {
                     document.getElementById("root")
                 );
             });
-        // .catch(() => {
-        // });
     };
 
     render() {
@@ -97,4 +95,4 @@ class Form extends React.Component {
     }
 }
 
-export { Form };
+export default Login;
