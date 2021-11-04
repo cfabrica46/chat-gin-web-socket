@@ -97,7 +97,7 @@ class Chat extends React.Component {
                     this.setState({ users: users });
                 }
 
-                messageClass = "chat-msg--system";
+                messageClass = "system";
                 if (message.msg.body === "ping") {
                     ping = true;
                 }
@@ -110,7 +110,7 @@ class Chat extends React.Component {
                             let msgs = this.state.msgs;
 
                             let sendMsg = this.state.pendingMsgs[i];
-                            sendMsg.msgClass = "chat-msg--user";
+                            sendMsg.msgClass = "user";
 
                             msgs.push(sendMsg);
 
@@ -127,7 +127,7 @@ class Chat extends React.Component {
                     }
                     return;
                 } else {
-                    messageClass = "chat-msg--other";
+                    messageClass = "other";
                 }
             }
             let myMsg = {
@@ -158,19 +158,13 @@ class Chat extends React.Component {
         let myMsg = {
             owner: this.props.owner,
             body: this.state.value,
-            msgClass: "chat-msg--sending",
+            msgClass: "sending",
             isStatusMessage: false,
         };
-        console.log(myMsg);
-
-        // let newMsgs = this.state.msgs;
-        // newMsgs.push(myMsg);
-        // this.setState({ msgs: newMsgs });
 
         let pendingMsgs = this.state.pendingMsgs;
         pendingMsgs.push(myMsg);
         this.setState({ pendingMsgs: pendingMsgs });
-        console.log(this.state.pendingMsgs);
 
         // Send Message
         let message = new Message(this.props.token, this.state.value);

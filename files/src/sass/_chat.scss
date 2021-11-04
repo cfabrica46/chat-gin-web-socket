@@ -158,22 +158,40 @@ body {
             box-sizing: border-box;
             height: 70%;
             width: 100%;
-            padding: 0 5px;
+            padding: 0 15px;
             overflow: hidden;
             white-space: normal;
             flex: 1;
+
+            .chat-name {
+                font-family: Courier;
+                font-size: 1.4em;
+                font-weight: 900;
+                width: 100%;
+                word-break: break-all;
+                margin-bottom: 5px;
+            }
+            .chat-name--other {
+                color: $othername;
+            }
+            .chat-name--user {
+                text-align: right;
+                color: $myname;
+            }
+
             .chat-msg {
                 font-family: Courier;
                 font-size: 1.2em;
                 font-weight: 700;
                 width: 100%;
                 word-break: break-all;
+                margin-top: 0;
             }
             .chat-msg--system {
                 text-align: center;
             }
             .chat-msg--other {
-                color: $deathColor;
+                color: $secundaryColor;
             }
             .chat-msg--sending {
                 text-align: right;
@@ -181,7 +199,7 @@ body {
             }
             .chat-msg--user {
                 text-align: right;
-                color: $secundaryColor;
+                color: $deathColor;
             }
 
             &::-webkit-scrollbar {
