@@ -73,7 +73,9 @@ class Chat extends React.Component {
         };
 
         this.ws.onmessage = (m) => {
-            this.setState({ loaded: true });
+            if (!this.state.loaded) {
+                this.setState({ loaded: true });
+            }
 
             let ping = false;
             let messageClass;
@@ -125,6 +127,7 @@ class Chat extends React.Component {
                             break;
                         }
                     }
+                    this.scrollDown();
                     return;
                 } else {
                     messageClass = "other";

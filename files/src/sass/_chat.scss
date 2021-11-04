@@ -159,7 +159,7 @@ body {
             height: 70%;
             width: 100%;
             padding: 0 15px;
-            overflow: hidden;
+            overflow: auto;
             white-space: normal;
             flex: 1;
 
@@ -177,6 +177,10 @@ body {
             .chat-name--user {
                 text-align: right;
                 color: $myname;
+            }
+            .chat-name--sending {
+                text-align: right;
+                color: $lightColor;
             }
 
             .chat-msg {
