@@ -127,7 +127,6 @@ class Chat extends React.Component {
                             break;
                         }
                     }
-                    this.scrollDown();
                     return;
                 } else {
                     messageClass = "other";
@@ -145,9 +144,11 @@ class Chat extends React.Component {
                 newMsgs.push(myMsg);
                 this.setState({ msgs: newMsgs });
             }
-
-            this.scrollDown();
         };
+    }
+
+    componentDidUpdate() {
+        this.scrollDown();
     }
 
     componentWillUnmount() {
